@@ -1,0 +1,8 @@
+name: PotPvP
+author: Drizzy, MineHQ
+version: 1.8.8
+main: net.frozenorb.potpvp.PotPvPRP
+depend:
+  - ProtocolLib
+softdepend:
+  - HolographicDisplays
