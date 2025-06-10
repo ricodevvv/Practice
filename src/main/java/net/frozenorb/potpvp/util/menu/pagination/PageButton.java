@@ -1,64 +1,73 @@
 package net.frozenorb.potpvp.util.menu.pagination;
 
-import net.frozenorb.potpvp.util.menu.Button;
 import lombok.AllArgsConstructor;
+import net.frozenorb.potpvp.util.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.frozenorb.potpvp.util.menu.Button;
 
 @AllArgsConstructor
 public class PageButton extends Button {
+
     private int mod;
     private PaginatedMenu menu;
 
     @Override
-    public void clicked(Player player,int i,ClickType clickType) {
+    public ItemStack getButtonItem(Player player) {
+        if (this.mod > 0) {
+            if (hasNext(player)) {
+                return new ItemBuilder(Material.ARROW)
 
-        if (clickType == ClickType.RIGHT) {
-            (new ViewAllPagesMenu(this.menu)).openMenu(player);
-            playNeutral(player);
-        } else if (this.hasNext(player)) {
-            this.menu.modPage(player, this.mod);
-            Button.playNeutral(player);
+                        .build();
+            } else {
+                return new ItemBuilder(Material.ARROW)
+
+                        .build();
+            }
         } else {
-            Button.playFail(player);
-        }
+            if (hasPrevious(player)) {
+                return new ItemBuilder(Material.ARROW)
 
+                        .build();
+            } else {
+                return new ItemBuilder(Material.ARROW)
+
+                        .build();
+            }
+        }
+    }
+
+    @Override
+    public void clicked(Player player, ClickType clickType) {
+        if (this.mod > 0) {
+            if (hasNext(player)) {
+                this.menu.modPage(player, this.mod);
+                Button.playNeutral(player);
+            } else {
+                Button.playFail(player);
+
+            }
+        } else {
+            if (hasPrevious(player)) {
+                this.menu.modPage(player, this.mod);
+                Button.playNeutral(player);
+            } else {
+                Button.playFail(player);
+            }
+        }
     }
 
     private boolean hasNext(Player player) {
-
-        final int pg = this.menu.getPage() + this.mod;
-
-        return pg > 0 && this.menu.getPages(player) >= pg;
+        int pg = this.menu.getPage() + this.mod;
+        return this.menu.getPages(player) >= pg;
     }
 
-    @Override
-    public String getName(Player player) {
-
-        if (!this.hasNext(player)) {
-            return this.mod > 0 ? "§7Last page" : "§7First page";
-        } else {
-            return this.mod > 0 ? "§a⟶" : "§c⟵";
-        }
-
+    private boolean hasPrevious(Player player) {
+        int pg = this.menu.getPage() + this.mod;
+        return pg > 0;
     }
 
-    @Override
-    public List<String> getDescription(Player player) {
-        return new ArrayList();
-    }
-
-    @Override
-    public byte getDamageValue(Player player) {
-        return (byte)(this.hasNext(player) ? 11 : 7);
-    }
-
-    @Override
-    public Material getMaterial(Player player) {
-        return Material.CARPET;
-    }
 }

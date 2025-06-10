@@ -23,7 +23,8 @@ public final class ArenaGrid {
     public static final int GRID_SPACING_X = 300;
     public static final int GRID_SPACING_Z = 300;
 
-    @Getter private boolean busy = false;
+    @Getter
+    private boolean busy = false;
 
     public void scaleCopies(ArenaSchematic schematic, int desiredCopies, Runnable callback) {
         if (busy) {
@@ -130,9 +131,9 @@ public final class ArenaGrid {
         Location upperCorner = WorldEditUtils.vectorToLocation(pasteAt.add(clipboard.getSize()));
 
         return new Arena(
-            schematic.getName(),
-            copy,
-            new Cuboid(lowerCorner, upperCorner)
+                schematic.getName(),
+                copy,
+                new Cuboid(lowerCorner, upperCorner)
         );
     }
 

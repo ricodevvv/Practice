@@ -72,13 +72,13 @@ public final class PlayerUtils {
         Player playerDamager = null;
 
         if (damager instanceof Player) {
-            playerDamager = (Player)damager;
+            playerDamager = (Player) damager;
         } else if (damager instanceof Projectile) {
 
-            final Projectile projectile = (Projectile)damager;
+            final Projectile projectile = (Projectile) damager;
 
             if (projectile.getShooter() instanceof Player) {
-                playerDamager = (Player)projectile.getShooter();
+                playerDamager = (Player) projectile.getShooter();
             }
         }
 
@@ -86,48 +86,48 @@ public final class PlayerUtils {
     }
 
     public static boolean hasOtherInventoryOpen(Player player) {
-        return ((CraftPlayer)player).getHandle().activeContainer.windowId != 0;
+        return ((CraftPlayer) player).getHandle().activeContainer.windowId != 0;
     }
 
     public static int getPing(Player player) {
-        return ((CraftPlayer)player).getHandle().ping;
+        return ((CraftPlayer) player).getHandle().ping;
     }
 
     public static void animateDeath(Player player, boolean hideAfter) {
 
         final int entityId = EntityUtils.getFakeEntityId();
-        final PacketPlayOutNamedEntitySpawn spawnPacket = new PacketPlayOutNamedEntitySpawn(((CraftPlayer)player).getHandle());
+        final PacketPlayOutNamedEntitySpawn spawnPacket = new PacketPlayOutNamedEntitySpawn(((CraftPlayer) player).getHandle());
         final PacketPlayOutEntityStatus statusPacket = new PacketPlayOutEntityStatus();
 
         try {
             SPAWN_PACKET_ID_FIELD.set(spawnPacket, entityId);
             STATUS_PACKET_ID_FIELD.set(statusPacket, entityId);
-            STATUS_PACKET_STATUS_FIELD.set(statusPacket, (byte)3);
+            STATUS_PACKET_STATUS_FIELD.set(statusPacket, (byte) 3);
 
             final int radius = MinecraftServer.getServer().getPlayerList().d();
             final Set<Player> sentTo = new HashSet<>();
 
-            for (Entity entity : player.getNearbyEntities(radius,radius,radius)) {
+            for (Entity entity : player.getNearbyEntities(radius, radius, radius)) {
 
                 if (!(entity instanceof Player)) {
                     continue;
                 }
 
-                final Player watcher = (Player)entity;
+                final Player watcher = (Player) entity;
 
                 if (watcher.getUniqueId().equals(player.getUniqueId())) {
                     continue;
                 }
 
-                ((CraftPlayer)watcher).getHandle().playerConnection.sendPacket(spawnPacket);
-                ((CraftPlayer)watcher).getHandle().playerConnection.sendPacket(statusPacket);
+                ((CraftPlayer) watcher).getHandle().playerConnection.sendPacket(spawnPacket);
+                ((CraftPlayer) watcher).getHandle().playerConnection.sendPacket(statusPacket);
 
                 sentTo.add(watcher);
             }
 
             if (hideAfter) {
                 PotPvPRP.getInstance().getServer().getScheduler().runTaskLater(PotPvPRP.getInstance(), () -> {
-                    for ( Player watcher : sentTo ) {
+                    for (Player watcher : sentTo) {
                         ((CraftPlayer) watcher).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(entityId));
                     }
                 }, 40L);
@@ -141,18 +141,18 @@ public final class PlayerUtils {
     public static void animateDeath(Player player, Player watcher) {
 
         final int entityId = EntityUtils.getFakeEntityId();
-        final PacketPlayOutNamedEntitySpawn spawnPacket = new PacketPlayOutNamedEntitySpawn(((CraftPlayer)player).getHandle());
+        final PacketPlayOutNamedEntitySpawn spawnPacket = new PacketPlayOutNamedEntitySpawn(((CraftPlayer) player).getHandle());
         final PacketPlayOutEntityStatus statusPacket = new PacketPlayOutEntityStatus();
 
         try {
             SPAWN_PACKET_ID_FIELD.set(spawnPacket, entityId);
             STATUS_PACKET_ID_FIELD.set(statusPacket, entityId);
-            STATUS_PACKET_STATUS_FIELD.set(statusPacket, (byte)3);
+            STATUS_PACKET_STATUS_FIELD.set(statusPacket, (byte) 3);
 
-            ((CraftPlayer)watcher).getHandle().playerConnection.sendPacket(spawnPacket);
-            ((CraftPlayer)watcher).getHandle().playerConnection.sendPacket(statusPacket);
+            ((CraftPlayer) watcher).getHandle().playerConnection.sendPacket(spawnPacket);
+            ((CraftPlayer) watcher).getHandle().playerConnection.sendPacket(statusPacket);
 
-            PotPvPRP.getInstance().getServer().getScheduler().runTaskLater(PotPvPRP.getInstance(), () -> ((CraftPlayer)watcher).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(entityId)), 40L);
+            PotPvPRP.getInstance().getServer().getScheduler().runTaskLater(PotPvPRP.getInstance(), () -> ((CraftPlayer) watcher).getHandle().playerConnection.sendPacket(new PacketPlayOutEntityDestroy(entityId)), 40L);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

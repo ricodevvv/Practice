@@ -29,7 +29,7 @@ public final class ItemUtils {
     /**
      * Checks if a {@link ItemStack} is an instant heal potion (if its type is {@link PotionType#INSTANT_HEAL})
      */
-    public final Predicate<ItemStack> INSTANT_HEAL_POTION_PREDICATE =item -> {
+    public final Predicate<ItemStack> INSTANT_HEAL_POTION_PREDICATE = item -> {
         if (item.getType() != Material.POTION) {
             return false;
         }
@@ -64,7 +64,7 @@ public final class ItemUtils {
     /**
      * Returns the number of stacks of items matching the predicate provided.
      *
-     * @param items ItemStack array to scan
+     * @param items     ItemStack array to scan
      * @param predicate The predicate which will be applied to each non-null temStack.
      * @return The amount of ItemStacks which matched the predicate, or 0 if {@code items} was null.
      */
@@ -201,10 +201,6 @@ public final class ItemUtils {
         ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setDisplayName(string);
         itemStack.setItemMeta(itemMeta);
-    }
-
-    public ItemBuilder builder(Material type) {
-        return ItemBuilder.of(type);
     }
 
     private List<String> readLines() {

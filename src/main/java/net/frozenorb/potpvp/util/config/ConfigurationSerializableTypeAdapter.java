@@ -21,7 +21,8 @@ import java.util.Map;
 
 public class ConfigurationSerializableTypeAdapter implements JsonDeserializer<ConfigurationSerializable>, JsonSerializer<ConfigurationSerializable> {
 
-    private static final Type type = new TypeToken<LinkedHashMap<String, Object>>() {}.getType();
+    private static final Type type = new TypeToken<LinkedHashMap<String, Object>>() {
+    }.getType();
 
     private static ConfigurationSerializable deserializeObject(Map<String, Object> deserialized) {
         LinkedHashMap<String, Object> conversion = new LinkedHashMap<>(deserialized.size());

@@ -68,8 +68,8 @@ public final class WorldEditUtils {
 
     public static void clear(Cuboid bounds) {
         clear(
-            new Vector(bounds.getLowerX(), bounds.getLowerY(), bounds.getLowerZ()),
-            new Vector(bounds.getUpperX(), bounds.getUpperY(), bounds.getUpperZ())
+                new Vector(bounds.getLowerX(), bounds.getLowerY(), bounds.getLowerZ()),
+                new Vector(bounds.getUpperX(), bounds.getUpperY(), bounds.getUpperZ())
         );
     }
 
@@ -99,10 +99,10 @@ public final class WorldEditUtils {
         ArenaHandler arenaHandler = PotPvPRP.getInstance().getArenaHandler();
 
         return new Location(
-            arenaHandler.getArenaWorld(),
-            vector.getBlockX(),
-            vector.getBlockY(),
-            vector.getBlockZ()
+                arenaHandler.getArenaWorld(),
+                vector.getBlockX(),
+                vector.getBlockY(),
+                vector.getBlockZ()
         );
     }
 

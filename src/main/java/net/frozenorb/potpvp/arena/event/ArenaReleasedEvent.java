@@ -12,7 +12,8 @@ import lombok.Getter;
  */
 public final class ArenaReleasedEvent extends ArenaEvent {
 
-    @Getter private static HandlerList handlerList = new HandlerList();
+    @Getter
+    private static HandlerList handlerList = new HandlerList();
 
     public ArenaReleasedEvent(Arena arena) {
         super(arena);

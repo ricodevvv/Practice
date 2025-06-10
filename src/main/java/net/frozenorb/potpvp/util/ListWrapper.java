@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ListWrapper<T> {
- 
+
     private List<T> backingList;
 
     public List<T> ensure() {

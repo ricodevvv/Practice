@@ -11,13 +11,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public final class UUIDListener implements Listener {
 
     private PotPvPRP plugin = PotPvPRP.getInstance();
-    
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         if (plugin.getUuidCache().cached(event.getUniqueId())) {
-            plugin.getUuidCache().update(event.getUniqueId(),event.getName());
+            plugin.getUuidCache().update(event.getUniqueId(), event.getName());
         } else {
-            plugin.getUuidCache().updateAll(event.getUniqueId(),event.getName());
+            plugin.getUuidCache().updateAll(event.getUniqueId(), event.getName());
         }
 
     }
@@ -28,7 +28,7 @@ public final class UUIDListener implements Listener {
             return;
         }
 
-        UUIDCache.MONITOR_CACHE.put(event.getPlayer().getUniqueId(),true);
+        UUIDCache.MONITOR_CACHE.put(event.getPlayer().getUniqueId(), true);
     }
 
 }

@@ -1,47 +1,44 @@
 package net.frozenorb.potpvp.util.menu.pagination;
 
-import net.frozenorb.potpvp.util.menu.Button;
 import lombok.AllArgsConstructor;
+import net.frozenorb.potpvp.util.CC;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.List;
+import net.frozenorb.potpvp.util.menu.Button;
+
+import java.util.Collections;
 
 @AllArgsConstructor
 public class JumpToPageButton extends Button {
 
     private int page;
     private PaginatedMenu menu;
+    private boolean current;
 
     @Override
-    public String getName(Player player) {
-        return "§ePage " + this.page;
+    public ItemStack getButtonItem(Player player) {
+        ItemStack itemStack = new ItemStack(this.current ? Material.ENCHANTED_BOOK : Material.BOOK, this.page);
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        itemMeta.setDisplayName(CC.GREEN + "Page " + this.page);
+
+        if (this.current) {
+            itemMeta.setLore(Collections.singletonList(CC.GREEN + "Click for change the page"));
+        }
+
+        itemStack.setItemMeta(itemMeta);
+
+        return itemStack;
     }
 
     @Override
-    public List<String> getDescription(Player player) {
-        return null;
-    }
-
-    @Override
-    public Material getMaterial(Player player) {
-        return Material.BOOK;
-    }
-
-    @Override
-    public int getAmount(Player player) {
-        return this.page;
-    }
-
-    @Override
-    public byte getDamageValue(Player player) {
-        return 0;
-    }
-
-    @Override
-    public void clicked(Player player, int i, ClickType clickType) {
+    public void clicked(Player player, ClickType clickType) {
         this.menu.modPage(player, this.page - this.menu.getPage());
         Button.playNeutral(player);
     }
+
 }

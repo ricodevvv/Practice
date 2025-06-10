@@ -23,7 +23,7 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
      * @param l1 - One of the corners
      * @param l2 - The other corner
      */
-    public Cuboid(Location l1,Location l2) {
+    public Cuboid(Location l1, Location l2) {
         if (!l1.getWorld().equals(l2.getWorld())) {
             throw new IllegalArgumentException("Locations must be on the same world");
         }
@@ -66,7 +66,7 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
      * @param y2    - Y co-ordinate of corner 2
      * @param z2    - Z co-ordinate of corner 2
      */
-    public Cuboid(World world,int x1,int y1,int z1,int x2,int y2,int z2) {
+    public Cuboid(World world, int x1, int y1, int z1, int x2, int y2, int z2) {
         this.worldName = world.getName();
         this.x1 = Math.min(x1, x2);
         this.x2 = Math.max(x1, x2);
@@ -671,7 +671,7 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
     }
 
     public enum CuboidDirection {
-        NORTH,EAST,SOUTH,WEST,UP,DOWN,HORIZONTAL,VERTICAL,BOTH,UNKNOWN;
+        NORTH, EAST, SOUTH, WEST, UP, DOWN, HORIZONTAL, VERTICAL, BOTH, UNKNOWN;
 
         public CuboidDirection opposite() {
             switch (this) {
@@ -708,8 +708,10 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
         public CuboidIterator(World w, int x1, int y1, int z1, int x2, int y2, int z2) {
             this.w = w;
             this.baseX = Math.min(x1, x2);
-            this.baseY = Math.min(y1, y2);;
-            this.baseZ = Math.min(z1, z2);;
+            this.baseY = Math.min(y1, y2);
+            ;
+            this.baseZ = Math.min(z1, z2);
+            ;
             this.sizeX = Math.abs(x2 - x1) + 1;
             this.sizeY = Math.abs(y2 - y1) + 1;
             this.sizeZ = Math.abs(z2 - z1) + 1;

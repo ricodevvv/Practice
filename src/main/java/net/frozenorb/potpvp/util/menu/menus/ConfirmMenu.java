@@ -1,34 +1,43 @@
 package net.frozenorb.potpvp.util.menu.menus;
 
-import net.frozenorb.potpvp.util.Callback;
-import net.frozenorb.potpvp.util.menu.Menu;
-import net.frozenorb.potpvp.util.menu.buttons.BooleanButton;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+
+import net.frozenorb.potpvp.util.CC;
 import net.frozenorb.potpvp.util.menu.Button;
-import org.bukkit.Material;
+import net.frozenorb.potpvp.util.menu.Menu;
+import net.frozenorb.potpvp.util.menu.TypeCallback;
+import net.frozenorb.potpvp.util.menu.button.ConfirmationButton;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@AllArgsConstructor
 public class ConfirmMenu extends Menu {
 
-    private String title;
-    @Getter private final Callback<Boolean> response;
+    private final String title;
+    private final TypeCallback<Boolean> response;
+    private final boolean closeAfterResponse;
+    private final Button centerButtons;
 
+    public ConfirmMenu(TypeCallback<Boolean> response, boolean closeAfter, Button centerButtons) {
+        this.title = CC.YELLOW + "Confirm this";
+        this.response = response;
+        this.closeAfterResponse = closeAfter;
+        this.centerButtons = centerButtons;
+    }
+
+    @Override
     public Map<Integer, Button> getButtons(Player player) {
         HashMap<Integer, Button> buttons = new HashMap<>();
 
-        for(int i = 0; i < 9; ++i) {
-            if (i == 3) {
-                buttons.put(i, new BooleanButton(true, this.response));
-            } else if (i == 5) {
-                buttons.put(i, new BooleanButton(false, this.response));
-            } else {
-                buttons.put(i, Button.placeholder(Material.STAINED_GLASS_PANE, (byte)14, " "));
+        for (int x = 0; x < 3; x++) {
+            for (int y = 0; y < 3; y++) {
+                buttons.put(getSlot(x, y), new ConfirmationButton(true, response, closeAfterResponse));
+                buttons.put(getSlot(8 - x, y), new ConfirmationButton(false, response, closeAfterResponse));
             }
+        }
+
+        if (centerButtons != null) {
+            buttons.put(getSlot(4, 1), centerButtons);
         }
 
         return buttons;
@@ -36,7 +45,7 @@ public class ConfirmMenu extends Menu {
 
     @Override
     public String getTitle(Player player) {
-        return this.title;
+        return title;
     }
 
 }

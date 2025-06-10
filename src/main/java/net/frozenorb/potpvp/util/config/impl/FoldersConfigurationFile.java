@@ -30,6 +30,7 @@ public class FoldersConfigurationFile extends AbstractConfigurationFile {
 
         this.applyHeader();
     }
+
     public FoldersConfigurationFile(JavaPlugin plugin, String folder, String name, boolean overwrite) {
         this(plugin, folder, name, overwrite, true);
     }
@@ -100,7 +101,7 @@ public class FoldersConfigurationFile extends AbstractConfigurationFile {
         return this.configuration.contains(path) ? this.configuration.getStringList(path) : null;
     }
 
-    public void reload(){
+    public void reload() {
         try {
             getConfiguration().load(file);
             getConfiguration().save(file);

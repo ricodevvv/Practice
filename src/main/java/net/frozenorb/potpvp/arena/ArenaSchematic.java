@@ -2,10 +2,12 @@ package net.frozenorb.potpvp.arena;
 
 import com.google.common.base.Preconditions;
 
-import com.qrakn.morpheus.game.event.GameEvent;
+
 import com.sk89q.worldedit.Vector;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,79 +16,43 @@ import lombok.Setter;
  * Represents an arena schematic. See {@link net.frozenorb.potpvp.arena}
  * for a comparision of {@link Arena}s and {@link ArenaSchematic}s.
  */
+@Getter
 public final class ArenaSchematic {
 
     /**
      * Name of this schematic (ex "Candyland")
      */
-    @Getter private String name;
+    @Getter
+    private String name;
+
+    /**
+     * Display name of this Arena, will be used when communicating a GameMode
+     * to players. Ex: "Map 15", "Ice KOTH", ...
+     */
+    @Getter
+    @Setter
+    private String displayName;
 
     /**
      * If matches can be scheduled on an instance of this arena.
      * Only impacts match scheduling, admin commands are (ignoring visual differences) nonchanged
      */
-    @Setter private boolean enabled = false;
+    @Setter
+    private boolean enabled = false;
+
+
+    @Getter
+    @Setter
+    private int gridIndex;
 
     /**
-     * Maximum number of players that can occupy an instance of this arena.
-     * Some small schematics should only be used for smaller fights
+     * @param String kit name
      */
-    @Getter @Setter private int maxPlayerCount = 256;
+    @Getter
+    private Set<String> kits = new HashSet<>();
 
-    /**
-     * Minimum number of players that can occupy an instance of this arena.
-     * Some large schematics should only be used for larger fights
-     */
-    @Getter @Setter private int minPlayerCount = 2;
-
-    /**
-     * If this schematic can be used for ranked matches
-     * Some "joke" schematics cannot be used for ranked (due to their nature)
-     */
-    @Getter @Setter private boolean supportsRanked = false;
-
-    /**
-     * If this schematic can be only be used for archer matches
-     * Some schematics are built for specifically archer fights
-     */
-    @Getter @Setter private boolean archerOnly = false;
-
-    /**
-     * If this schematic can be only be used for archer matches
-     * Some schematics are built for specifically archer fights
-     */
-    @Getter @Setter private boolean teamFightsOnly = false;
-
-
-    /**
-     * If this schematic can be only be used for Sumo matches
-     * Some schematics are built for specifically Sumo fights
-     */
-    @Getter @Setter private boolean sumoOnly = false;
-
-    /**
-     * If this schematic can be only be used for Spleef matches
-     * Some schematics are built for specifically Spleef fights
-     */
-    @Getter @Setter private boolean spleefOnly = false;
-
-    /**
-     * If this schematic can be only be used for BuildUHC matches
-     * Some schematics are built for specifically BuildUHC fights
-     */
-    @Getter @Setter private boolean buildUHCOnly = false;
-
-    @Getter @Setter private boolean HCFOnly = false;
-
-    @Getter @Setter private String eventName = null;
-
-    /**
-     * Index on the X axis on the grid (and in calculations regarding model arenas)
-     * @see ArenaGrid
-     */
-    @Getter @Setter private int gridIndex;
-
-    public ArenaSchematic() {} // for gson
+    public ArenaSchematic() {
+    } // for gson
 
     public ArenaSchematic(String name) {
         this.name = Preconditions.checkNotNull(name, "name");
@@ -100,9 +66,9 @@ public final class ArenaSchematic {
         int xModifier = ArenaGrid.GRID_SPACING_X * gridIndex;
 
         return new Vector(
-            ArenaGrid.STARTING_POINT.getBlockX() - xModifier,
-            ArenaGrid.STARTING_POINT.getBlockY(),
-            ArenaGrid.STARTING_POINT.getBlockZ()
+                ArenaGrid.STARTING_POINT.getBlockX() - xModifier,
+                ArenaGrid.STARTING_POINT.getBlockY(),
+                ArenaGrid.STARTING_POINT.getBlockZ()
         );
     }
 
@@ -116,24 +82,11 @@ public final class ArenaSchematic {
         Vector size = WorldEditUtils.readSchematicSize(this);
 
         WorldEditUtils.clear(
-            start,
-            start.add(size)
+                start,
+                start.add(size)
         );
     }
 
-    public GameEvent getEvent() {
-        if (eventName != null) {
-            for (GameEvent event : GameEvent.getEvents()) {
-                if (event.getName().equalsIgnoreCase(eventName)) {
-                    return event;
-                }
-            }
-
-            eventName = null;
-        }
-
-        return null;
-    }
 
     @Override
     public boolean equals(Object o) {

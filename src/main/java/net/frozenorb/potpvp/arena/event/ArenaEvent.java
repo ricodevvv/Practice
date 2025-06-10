@@ -16,7 +16,8 @@ abstract class ArenaEvent extends Event {
     /**
      * The match involved in this event
      */
-    @Getter private final Arena arena;
+    @Getter
+    private final Arena arena;
 
     ArenaEvent(Arena arena) {
         this.arena = Preconditions.checkNotNull(arena, "arena");

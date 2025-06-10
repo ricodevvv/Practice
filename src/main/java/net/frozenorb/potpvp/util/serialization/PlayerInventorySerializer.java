@@ -20,16 +20,21 @@ public class PlayerInventorySerializer {
     }
 
     public static BasicDBObject getInsertableObject(Player player) {
-        return (BasicDBObject)JSON.parse(serialize(player));
+        return (BasicDBObject) JSON.parse(serialize(player));
     }
 
     public static class PlayerInventoryWrapper {
 
-        @Getter private final PotionEffect[] effects;
-        @Getter private final ItemStack[] contents;
-        @Getter private final ItemStack[] armor;
-        @Getter private final int health;
-        @Getter private final int hunger;
+        @Getter
+        private final PotionEffect[] effects;
+        @Getter
+        private final ItemStack[] contents;
+        @Getter
+        private final ItemStack[] armor;
+        @Getter
+        private final int health;
+        @Getter
+        private final int hunger;
 
         public PlayerInventoryWrapper(Player player) {
             this.contents = player.getInventory().getContents();
@@ -37,30 +42,30 @@ public class PlayerInventorySerializer {
             int i;
             ItemStack stack;
 
-            for(i = 0; i < this.contents.length; ++i) {
+            for (i = 0; i < this.contents.length; ++i) {
 
                 stack = this.contents[i];
 
                 if (stack == null) {
-                    this.contents[i] = new ItemStack(Material.AIR, 0, (short)0);
+                    this.contents[i] = new ItemStack(Material.AIR, 0, (short) 0);
                 }
 
             }
 
             this.armor = player.getInventory().getArmorContents();
 
-            for(i = 0; i < this.armor.length; ++i) {
+            for (i = 0; i < this.armor.length; ++i) {
 
                 stack = this.armor[i];
 
                 if (stack == null) {
-                    this.armor[i] = new ItemStack(Material.AIR, 0, (short)0);
+                    this.armor[i] = new ItemStack(Material.AIR, 0, (short) 0);
                 }
 
             }
 
             this.effects = player.getActivePotionEffects().toArray(new PotionEffect[player.getActivePotionEffects().size()]);
-            this.health = (int)player.getHealth();
+            this.health = (int) player.getHealth();
             this.hunger = player.getFoodLevel();
         }
 

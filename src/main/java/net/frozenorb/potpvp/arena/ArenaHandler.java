@@ -46,7 +46,8 @@ public final class ArenaHandler {
     private final Map<String, Map<Integer, Arena>> arenaInstances = new HashMap<>();
     // schematic name -> ArenaSchematic instance
     private final Map<String, ArenaSchematic> schematics = new TreeMap<>();
-    @Getter private final ArenaGrid grid = new ArenaGrid();
+    @Getter
+    private final ArenaGrid grid = new ArenaGrid();
 
     public ArenaHandler() {
         Bukkit.getPluginManager().registerEvents(new ArenaItemResetListener(), PotPvPRP.getInstance());
@@ -60,7 +61,8 @@ public final class ArenaHandler {
             // parsed as a List<Arena> and then inserted into Map<String, Map<Integer. Arena>>
             if (arenaInstancesFile.exists()) {
                 try (Reader arenaInstancesReader = Files.newReader(arenaInstancesFile, Charsets.UTF_8)) {
-                    Type arenaListType = new TypeToken<List<Arena>>(){}.getType();
+                    Type arenaListType = new TypeToken<List<Arena>>() {
+                    }.getType();
                     List<Arena> arenaList = PotPvPRP.getGson().fromJson(arenaInstancesReader, arenaListType);
 
                     for (Arena arena : arenaList) {
@@ -76,7 +78,8 @@ public final class ArenaHandler {
             // parsed as a List<ArenaSchematic> and then inserted into Map<String, ArenaSchematic>
             if (schematicsFile.exists()) {
                 try (Reader schematicsFileReader = Files.newReader(schematicsFile, Charsets.UTF_8)) {
-                    Type schematicListType = new TypeToken<List<ArenaSchematic>>() {}.getType();
+                    Type schematicListType = new TypeToken<List<ArenaSchematic>>() {
+                    }.getType();
                     List<ArenaSchematic> schematicList = PotPvPRP.getGson().fromJson(schematicsFileReader, schematicListType);
 
                     for (ArenaSchematic schematic : schematicList) {
@@ -93,10 +96,11 @@ public final class ArenaHandler {
     @SneakyThrows
     public void saveSchematics() {
         Files.write(
-            PotPvPRP.getGson().toJson(schematics.values()),
-            new File(PotPvPRP.getInstance().getDataFolder(), SCHEMATICS_FILE_NAME),
-            Charsets.UTF_8
+                PotPvPRP.getGson().toJson(schematics.values()),
+                new File(PotPvPRP.getInstance().getDataFolder(), SCHEMATICS_FILE_NAME),
+                Charsets.UTF_8
         );
+
     }
 
     public void saveArenas() throws IOException {
@@ -107,9 +111,9 @@ public final class ArenaHandler {
         });
 
         Files.write(
-            PotPvPRP.getGson().toJson(allArenas),
-            new File(PotPvPRP.getInstance().getDataFolder(), ARENA_INSTANCES_FILE_NAME),
-            Charsets.UTF_8
+                PotPvPRP.getGson().toJson(allArenas),
+                new File(PotPvPRP.getInstance().getDataFolder(), ARENA_INSTANCES_FILE_NAME),
+                Charsets.UTF_8
         );
     }
 
@@ -155,8 +159,9 @@ public final class ArenaHandler {
 
     /**
      * Finds an arena by its schematic and copy pair
+     *
      * @param schematic ArenaSchematic to use when looking up arena
-     * @param copy copy of arena to look up
+     * @param copy      copy of arena to look up
      * @return Arena object existing for specified schematic and copy pair, if one exists
      */
     public Arena getArena(ArenaSchematic schematic, int copy) {
@@ -171,6 +176,7 @@ public final class ArenaHandler {
 
     /**
      * Finds all arena instances for the given schematic
+     *
      * @param schematic schematic to look up arenas for
      * @return immutable set of all arenas for given schematic
      */
@@ -186,6 +192,7 @@ public final class ArenaHandler {
 
     /**
      * Counts the number of arena instances present for the given schematic
+     *
      * @param schematic schematic to count arenas for
      * @return number of copies present of the given schematic
      */
@@ -196,6 +203,7 @@ public final class ArenaHandler {
 
     /**
      * Finds all schematic instances registered
+     *
      * @return immutable set of all schematics registered
      */
     public Set<ArenaSchematic> getSchematics() {
@@ -204,6 +212,7 @@ public final class ArenaHandler {
 
     /**
      * Finds an ArenaSchematic by its id
+     *
      * @param schematicName schematic id to search with
      * @return ArenaSchematic present for the given id, if one exists
      */
@@ -215,6 +224,7 @@ public final class ArenaHandler {
      * Attempts to allocate an arena for use, using the Predicate provided to determine
      * which arenas are eligible for use. Handles calling {@link net.frozenorb.potpvp.arena.event.ArenaAllocatedEvent}
      * automatically.
+     *
      * @param acceptableSchematicPredicate Predicate to use to determine if an {@link ArenaSchematic}
      *                                     is eligible for use.
      * @return The arena which has been allocated for use, or null, if one was not found.
@@ -253,6 +263,7 @@ public final class ArenaHandler {
     /**
      * Releases (unallocates) an arena so that it may be used again. Handles calling
      * {@link net.frozenorb.potpvp.arena.event.ArenaReleasedEvent} automatically.
+     *
      * @param arena the arena to release
      */
     public void releaseArena(Arena arena) {

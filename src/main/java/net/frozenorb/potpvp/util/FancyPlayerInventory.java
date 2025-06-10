@@ -109,8 +109,7 @@ public class FancyPlayerInventory extends PlayerInventory {
         if (i >= is.length) {
             i -= is.length;
             is = this.extra;
-        }
-        else if (is == this.armor) {
+        } else if (is == this.armor) {
             i = getReversedArmorSlotNum(i);
         }
 
@@ -137,8 +136,7 @@ public class FancyPlayerInventory extends PlayerInventory {
         if (i >= is.length) {
             i -= is.length;
             is = this.extra;
-        }
-        else if (is == this.armor) {
+        } else if (is == this.armor) {
             i = getReversedArmorSlotNum(i);
         }
 
@@ -149,8 +147,7 @@ public class FancyPlayerInventory extends PlayerInventory {
                 itemstack = is[i];
                 is[i] = null;
                 return itemstack;
-            }
-            else {
+            } else {
                 itemstack = is[i].cloneAndSubtract(j);
                 if (is[i].count == 0) {
                     is[i] = null;
@@ -158,8 +155,7 @@ public class FancyPlayerInventory extends PlayerInventory {
 
                 return itemstack;
             }
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -184,8 +180,7 @@ public class FancyPlayerInventory extends PlayerInventory {
         if (i >= is.length) {
             i -= is.length;
             is = this.extra;
-        }
-        else if (is == this.armor) {
+        } else if (is == this.armor) {
             i = getReversedArmorSlotNum(i);
         }
 
@@ -194,8 +189,7 @@ public class FancyPlayerInventory extends PlayerInventory {
 
             is[i] = null;
             return itemstack;
-        }
-        else {
+        } else {
             return null;
         }
     }
@@ -220,8 +214,7 @@ public class FancyPlayerInventory extends PlayerInventory {
         if (i >= is.length) {
             i -= is.length;
             is = this.extra;
-        }
-        else if (is == this.armor) {
+        } else if (is == this.armor) {
             i = getReversedArmorSlotNum(i);
         }
 

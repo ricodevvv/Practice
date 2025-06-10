@@ -14,8 +14,8 @@ public interface IUUIDCache {
 
     void ensure(UUID uuid);
 
-    void update(UUID uuid,String name);
+    void update(UUID uuid, String name);
 
-    void updateAll(UUID uuid,String name);
+    void updateAll(UUID uuid, String name);
 
 }

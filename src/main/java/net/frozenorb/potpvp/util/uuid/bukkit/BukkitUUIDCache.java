@@ -24,10 +24,13 @@ public final class BukkitUUIDCache implements IUUIDCache {
         return PotPvPRP.getInstance().getServer().getOfflinePlayer(name) != null;
     }
 
-    public void ensure(UUID uuid) {} // Do nothing, as this class just delegates calls down to Bukkit.
+    public void ensure(UUID uuid) {
+    } // Do nothing, as this class just delegates calls down to Bukkit.
 
-    public void update(UUID uuid, String name) {} // We never need to update this, as this class just delegates calls down to Bukkit.
+    public void update(UUID uuid, String name) {
+    } // We never need to update this, as this class just delegates calls down to Bukkit.
 
-    public void updateAll(UUID uuid,String name) {} // We never need to update this, as this class just delegates calls down to Bukkit.
+    public void updateAll(UUID uuid, String name) {
+    } // We never need to update this, as this class just delegates calls down to Bukkit.
 
 }

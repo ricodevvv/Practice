@@ -1,20 +1,22 @@
 package net.frozenorb.potpvp.util.menu.pagination;
 
 import net.frozenorb.potpvp.util.menu.Button;
-import net.frozenorb.potpvp.util.menu.Menu;
+
 import lombok.Getter;
+import net.frozenorb.potpvp.util.menu.Menu;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Getter
 public abstract class PaginatedMenu extends Menu {
 
-    @Getter private int page = 1;
+    public int page = 1;
 
     @Override
     public String getTitle(Player player) {
-        return getPrePaginatedTitle(player) + " - " + page + "/" + getPages(player);
+        return getPrePaginatedTitle(player);
     }
 
     /**
@@ -24,56 +26,57 @@ public abstract class PaginatedMenu extends Menu {
      * @param mod    delta to modify the page number by
      */
     public final void modPage(Player player, int mod) {
-        this.page += mod;
-
-        this.getButtons().clear();
-        this.openMenu(player);
+        page += mod;
+        getButtons().clear();
+        openMenu(player);
     }
 
     /**
      * @param player player viewing the inventory
-     * @return
      */
     public final int getPages(Player player) {
+        int buttonAmount = getAllPagesButtons(player).size();
 
-        final int buttonAmount = this.getAllPagesButtons(player).size();
+        if (buttonAmount == 0) {
+            return 1;
+        }
 
-        return buttonAmount == 0 ? 1 : (int)Math.ceil((double)buttonAmount / (double)this.getMaxItemsPerPage(player));
+        return (int) Math.ceil(buttonAmount / (double) getMaxItemsPerPage(player));
     }
 
     @Override
-    public final Map<Integer, Button> getButtons(Player player) {
+    public Map<Integer, Button> getButtons(Player player) {
+        int minIndex = (int) ((double) (page - 1) * getMaxItemsPerPage(player));
+        int maxIndex = (int) ((double) (page) * getMaxItemsPerPage(player));
+        int topIndex = 0;
 
-        final int minIndex = (int) ((double) (page - 1) * getMaxItemsPerPage(player));
-        final int maxIndex = (int) ((double) (page) * getMaxItemsPerPage(player));
+        HashMap<Integer, Button> buttons = new HashMap<>();
 
-        final HashMap<Integer, Button> buttons = new HashMap<>();
+        for (Map.Entry<Integer, Button> entry : getAllPagesButtons(player).entrySet()) {
+            int index = entry.getKey();
+
+            if (index >= minIndex && index < maxIndex) {
+                index -= (int) ((double) (getMaxItemsPerPage(player)) * (page - 1)) - 9;
+                buttons.put(index, entry.getValue());
+
+                if (index > topIndex) {
+                    topIndex = index;
+                }
+            }
+        }
 
         buttons.put(0, new PageButton(-1, this));
         buttons.put(8, new PageButton(1, this));
 
-        for (Map.Entry<Integer, Button> entry : getAllPagesButtons(player).entrySet()) {
-
-            int ind = entry.getKey();
-
-            if (ind >= minIndex && ind < maxIndex) {
-
-                ind -= (int) ((double) (getMaxItemsPerPage(player)) * (page - 1)) - 9;
-                buttons.put(ind, entry.getValue());
-            }
-
+        for (int i = 1; i < 8; i++) {
+            buttons.put(i, getPlaceholderButton());
         }
 
-        final Map<Integer, Button> global = getGlobalButtons(player);
+        Map<Integer, Button> global = getGlobalButtons(player);
 
         if (global != null) {
-
-            for (Map.Entry<Integer, Button> gent : global.entrySet()) {
-                buttons.put(gent.getKey(), gent.getValue());
-            }
-
+            buttons.putAll(global);
         }
-
 
         return buttons;
     }
@@ -84,7 +87,7 @@ public abstract class PaginatedMenu extends Menu {
 
     /**
      * @param player player viewing the inventory
-     * @return a Map of buttons that returns items which will be present on all pages
+     * @return a Map of button that returns items which will be present on all pages
      */
     public Map<Integer, Button> getGlobalButtons(Player player) {
         return null;
@@ -98,7 +101,8 @@ public abstract class PaginatedMenu extends Menu {
 
     /**
      * @param player player viewing the inventory
-     * @return a map of buttons that will be paginated and spread across pages
+     * @return a map of button that will be paginated and spread across pages
      */
     public abstract Map<Integer, Button> getAllPagesButtons(Player player);
+
 }

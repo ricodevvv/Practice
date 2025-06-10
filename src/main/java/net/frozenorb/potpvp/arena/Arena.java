@@ -2,6 +2,7 @@ package net.frozenorb.potpvp.arena;
 
 import java.util.*;
 import java.util.function.Predicate;
+
 import net.frozenorb.potpvp.util.Callback;
 import net.frozenorb.potpvp.util.Cuboid;
 import org.bukkit.Chunk;
@@ -49,6 +50,7 @@ public final class Arena {
     /**
      * Bounding box for this arena
      */
+    @Getter
     private Cuboid bounds;
 
     /**
@@ -56,6 +58,7 @@ public final class Arena {
      * For purposes of arena definition we ignore
      * non-two-teamed matches.
      */
+    @Getter
     private Location team1Spawn;
 
     /**
@@ -63,6 +66,7 @@ public final class Arena {
      * For purposes of arena definition we ignore
      * non-two-teamed matches.
      */
+    @Getter
     private Location team2Spawn;
 
     /**
@@ -70,6 +74,7 @@ public final class Arena {
      */
     private Location spectatorSpawn;
 
+    @Getter
     private List<Location> eventSpawns;
 
     /**
@@ -85,6 +90,7 @@ public final class Arena {
     private transient boolean inUse;
 
     private final transient Map<Long, ChunkSnapshot> chunkSnapshots = Maps.newHashMap();
+    private static Set<String> kits = new HashSet<>();
 
     public Arena() {
     } // for gson
@@ -243,19 +249,4 @@ public final class Arena {
         return Objects.hash(schematic, copy);
     }
 
-    public Location getTeam1Spawn() {
-        return team1Spawn;
-    }
-
-    public Location getTeam2Spawn() {
-        return team2Spawn;
-    }
-
-    public List<Location> getEventSpawns() {
-        return eventSpawns;
-    }
-
-    public Cuboid getBounds() {
-        return bounds;
-    }
 }

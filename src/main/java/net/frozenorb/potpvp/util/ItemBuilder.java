@@ -1,120 +1,224 @@
 package net.frozenorb.potpvp.util;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import net.frozenorb.potpvp.PotPvPRP;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import net.minecraft.server.v1_8_R3.NBTTagCompound;
+import net.minecraft.server.v1_8_R3.NBTTagString;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public class ItemBuilder {
 
-    private final ItemStack item;
+/**
+ * This Project is property of Desroyed Development © 2025
+ * Redistribution of this Project is not allowed
+ *
+ * @author ricadev
+ * Created: 09/06/2025
+ * Project: PotPvpReprised
+ */
 
-    public static ItemBuilder of(Material material) {
-        return new ItemBuilder(material, 1);
+public class ItemBuilder implements Listener {
+
+    private ItemStack is;
+
+    public ItemBuilder(Material mat) {
+        is = new ItemStack(mat);
     }
 
-    public static ItemBuilder of(Material material, int amount) {
-        return new ItemBuilder(material, amount);
-    }
-
-    public static ItemBuilder copyOf(ItemBuilder builder) {
-        return new ItemBuilder(builder.build());
-    }
-
-    public static ItemBuilder copyOf(ItemStack item) {
-        return new ItemBuilder(item);
-    }
-
-    private ItemBuilder(Material material, int amount) {
-        Preconditions.checkArgument(amount > 0, "Amount cannot be lower than 0.");
-        this.item = new ItemStack(material, amount);
-    }
-
-    private ItemBuilder(ItemStack item) {
-        this.item = item;
+    public ItemBuilder(ItemStack is) {
+        this.is = is;
     }
 
     public ItemBuilder amount(int amount) {
-        this.item.setAmount(amount);
+        is.setAmount(amount);
         return this;
     }
 
-    public ItemBuilder data(short data) {
-        this.item.setDurability(data);
+    public ItemBuilder name(String name) {
+        ItemMeta meta = is.getItemMeta();
+        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+        is.setItemMeta(meta);
         return this;
     }
 
-    public ItemBuilder enchant(Enchantment enchantment, int level) {
-        this.item.addUnsafeEnchantment(enchantment, level);
-        return this;
-    }
-
-    public ItemBuilder unenchant(Enchantment enchantment) {
-        this.item.removeEnchantment(enchantment);
-        return this;
-    }
-
-    public ItemBuilder name(String displayName) {
-        ItemMeta meta = this.item.getItemMeta();
-        meta.setDisplayName(displayName == null ? null : ChatColor.translateAlternateColorCodes('&', displayName));
-        this.item.setItemMeta(meta);
-        return this;
-    }
-
-    public ItemBuilder addToLore(String... parts) {
-        ItemMeta meta = this.item.getItemMeta();
-        if (meta == null) {
-            meta = PotPvPRP.getInstance().getServer().getItemFactory().getItemMeta(this.item.getType());
-        }
-
+    public ItemBuilder lore(String name) {
+        ItemMeta meta = is.getItemMeta();
         List<String> lore = meta.getLore();
+
         if (lore == null) {
-            lore = Lists.newArrayList();
+            lore = new ArrayList<>();
         }
 
-        (lore).addAll(Arrays.stream(parts).map((part) -> ChatColor.translateAlternateColorCodes('&', part)).collect(Collectors.toList()));
-        meta.setLore((List)lore);
-        this.item.setItemMeta(meta);
-        return this;
-    }
-
-    public ItemBuilder setLore(Collection<String> l) {
-        List<String> lore = new ArrayList();
-        ItemMeta meta = this.item.getItemMeta();
-        lore.addAll(l.stream().map((part) -> ChatColor.translateAlternateColorCodes('&', part)).collect(Collectors.toList()));
+        if (name != null) {
+            lore.add(ChatColor.translateAlternateColorCodes('&', name));
+        }
         meta.setLore(lore);
-        this.item.setItemMeta(meta);
+
+        is.setItemMeta(meta);
+
         return this;
     }
 
-    public ItemBuilder color(Color color) {
-        ItemMeta meta = this.item.getItemMeta();
-        if (!(meta instanceof LeatherArmorMeta)) {
-            throw new UnsupportedOperationException("Cannot set color of a non-leather armor item.");
-        } else {
-            ((LeatherArmorMeta)meta).setColor(color);
-            this.item.setItemMeta(meta);
-            return this;
+    public ItemBuilder lore(String... lore) {
+        ItemMeta meta = is.getItemMeta();
+        List<String> toSet = meta.getLore();
+
+        if (toSet == null) {
+            toSet = new ArrayList<>();
         }
+
+        for (String string : lore) {
+            if (string != null) {
+                toSet.add(ChatColor.translateAlternateColorCodes('&', string));
+            }
+        }
+
+        meta.setLore(toSet);
+        is.setItemMeta(meta);
+
+        return this;
     }
 
-    public ItemBuilder setUnbreakable(boolean unbreakable) {
-        ItemMeta meta = this.item.getItemMeta();
-        meta.spigot().setUnbreakable(unbreakable);
-        this.item.setItemMeta(meta);
+    public ItemBuilder lore(List<String> lore) {
+        ItemMeta meta = is.getItemMeta();
+        List<String> toSet = meta.getLore();
+
+        if (toSet == null) {
+            toSet = new ArrayList<>();
+        }
+
+        for (String string : lore) {
+            if (string != null) {
+                toSet.add(ChatColor.translateAlternateColorCodes('&', string));
+            }
+        }
+
+        meta.setLore(toSet);
+        is.setItemMeta(meta);
+
+        return this;
+    }
+
+    public ItemBuilder durability(int durability) {
+        is.setDurability((short) durability);
+        return this;
+    }
+
+    public ItemBuilder enchantments(Map<Enchantment, Integer> enchantments) {
+        this.is.addUnsafeEnchantments(enchantments);
+        return this;
+    }
+
+    public ItemBuilder enchantment(Enchantment enchantment, int level) {
+        is.addUnsafeEnchantment(enchantment, level);
+        return this;
+    }
+
+    public ItemBuilder enchantment(Enchantment enchantment) {
+        is.addUnsafeEnchantment(enchantment, 1);
+        return this;
+    }
+
+    public ItemBuilder type(Material material) {
+        is.setType(material);
+        return this;
+    }
+
+    public ItemBuilder clearLore() {
+        ItemMeta meta = is.getItemMeta();
+
+        meta.setLore(new ArrayList<>());
+        is.setItemMeta(meta);
+
+        return this;
+    }
+
+    public ItemBuilder clearEnchantments() {
+        for (Enchantment e : is.getEnchantments().keySet()) {
+            is.removeEnchantment(e);
+        }
+
+        return this;
+    }
+
+    public void unbreakable() {
+        ItemMeta im = this.is.getItemMeta();
+        im.spigot().setUnbreakable(true);
+        this.is.setItemMeta(im);
+    }
+
+    public ItemBuilder hideItemFlags() {
+        ItemMeta im = is.getItemMeta();
+        im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        im.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+        im.addItemFlags(ItemFlag.HIDE_PLACED_ON);
+        im.addItemFlags(ItemFlag.HIDE_DESTROYS);
+        im.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        is.setItemMeta(im);
+        return this;
+    }
+
+    public void glow() {
+        is.addUnsafeEnchantment(Enchantment.DURABILITY, 1);
+        ItemMeta im = is.getItemMeta();
+        im.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        is.setItemMeta(im);
+    }
+
+    public ItemBuilder addNBTTag(String s1, String s2) {
+        net.minecraft.server.v1_8_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(is);
+        NBTTagCompound compound = (nmsItem.hasTag()) ? nmsItem.getTag() : new NBTTagCompound();
+        compound.set(s1, new NBTTagString(s2));
+        is = CraftItemStack.asBukkitCopy(nmsItem);
+        return this;
+    }
+
+    public ItemBuilder headTexture(String texture) {
+        if (texture != null) {
+            SkullMeta hm = (SkullMeta) is.getItemMeta();
+            GameProfile profile = new GameProfile(new UUID(texture.hashCode(), texture.hashCode()), null);
+            profile.getProperties().put("textures", new Property("Value", texture));
+
+            try {
+                Field profileField = hm.getClass().getDeclaredField("profile");
+                profileField.setAccessible(true);
+                profileField.set(hm, profile);
+            } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+            is.setItemMeta(hm);
+        }
+        return this;
+    }
+
+    public ItemBuilder skull(String owner) {
+        try {
+            SkullMeta im = (SkullMeta) is.getItemMeta();
+            im.setOwner(owner);
+            is.setItemMeta(im);
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
         return this;
     }
 
     public ItemStack build() {
-        return this.item.clone();
+        return is;
     }
+
 }

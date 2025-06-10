@@ -39,11 +39,11 @@ public class BasicConfigurationFile extends AbstractConfigurationFile {
     public void applyHeader() {
         configuration.options().header(
                 "#####################################################################\n" +
-                "                                                                     #\n" +
-                "          Array Practice Core - Developed By Drizzy#0278             #\n" +
-                "       Bought at Refine Development - https://dsc.gg/refine          #\n" +
-                "                                                                     #\n" +
-                "#####################################################################");
+                        "                                                                     #\n" +
+                        "          Array Practice Core - Developed By Drizzy#0278             #\n" +
+                        "       Bought at Refine Development - https://dsc.gg/refine          #\n" +
+                        "                                                                     #\n" +
+                        "#####################################################################");
         save();
     }
 
@@ -98,7 +98,7 @@ public class BasicConfigurationFile extends AbstractConfigurationFile {
         return this.configuration.contains(path) ? this.configuration.getStringList(path) : null;
     }
 
-    public void reload(){
+    public void reload() {
         try {
             getConfiguration().load(file);
             getConfiguration().save(file);

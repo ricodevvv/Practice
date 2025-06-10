@@ -11,7 +11,7 @@ public enum EnchantmentWrapper {
 
     PROTECTION_ENVIRONMENTAL("Protection", new String[]{"p", "prot", "protect"}),
     PROTECTION_FIRE("Fire Protection", new String[]{"fp", "fprot", "fireprot", "fireprotection", "firep"}),
-    PROTECTION_FALL("Feather Falling", new String[]{"ff", "featherf", "ffalling","featherfalling"}),
+    PROTECTION_FALL("Feather Falling", new String[]{"ff", "featherf", "ffalling", "featherfalling"}),
     PROTECTION_EXPLOSIONS("Blast Protection", new String[]{"explosionsprotection", "explosionprotection", "bprotection", "bprotect", "blastprotect", "pe", "bp"}),
     PROTECTION_PROJECTILE("Projectile Protection", new String[]{"pp", "projprot", "projprotection", "projp", "pprot"}),
     THORNS("Thorns", new String[0]),
@@ -34,10 +34,12 @@ public enum EnchantmentWrapper {
     LUCK("Luck of the Sea", new String[]{"rodluck", "luckofsea", "los"}),
     LURE("Lure", new String[]{"rodlure"});
 
-    @Getter private String friendlyName;
-    @Getter private String[] parse;
+    @Getter
+    private String friendlyName;
+    @Getter
+    private String[] parse;
 
-    public void enchant(ItemStack item,int level) {
+    public void enchant(ItemStack item, int level) {
         item.addUnsafeEnchantment(this.getBukkitEnchantment(), level);
     }
 
