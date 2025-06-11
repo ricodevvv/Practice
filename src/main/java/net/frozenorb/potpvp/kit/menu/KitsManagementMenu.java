@@ -1,6 +1,6 @@
 package net.frozenorb.potpvp.kit.menu;
 
-import net.frozenorb.potpvp.config.Lenguage;
+import net.frozenorb.potpvp.config.Config;
 import net.frozenorb.potpvp.kit.KitHandler;
 import net.frozenorb.potpvp.util.ItemBuilder;
 import net.frozenorb.potpvp.util.menu.Button;
@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +23,7 @@ import java.util.Map;
 public class KitsManagementMenu extends PaginatedMenu {
     @Override
     public String getPrePaginatedTitle(Player player) {
-        return Lenguage.KIT_MENU.MANAGEMENT_MENU_TITLE;
+        return Config.KIT_MENU.MANAGEMENT_MENU_TITLE;
     }
 
     @Override
@@ -35,7 +34,7 @@ public class KitsManagementMenu extends PaginatedMenu {
             @Override
             public ItemStack getButtonItem(Player player) {
                 return new ItemBuilder(kit.getDisplayIcon().clone())
-                        .name(Lenguage.KIT_MENU.KIT_MANAGE_BUTTON.replace("<kit>", kit.getDisplayName()))
+                        .name(Config.KIT_MENU.KIT_MANAGE_BUTTON.replace("<kit>", kit.getDisplayName()))
                         .build();
             }
 

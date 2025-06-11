@@ -6,17 +6,28 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import lombok.Getter;
+import net.frozenorb.potpvp.adapter.board.NameThreadFactory;
+import net.frozenorb.potpvp.adapter.board.listener.ScoreboardListener;
+import net.frozenorb.potpvp.adapter.board.task.BoardTask;
 import net.frozenorb.potpvp.arena.ArenaHandler;
-import net.frozenorb.potpvp.commands.binds.impl.ArenaCommands;
+import net.frozenorb.potpvp.commands.impl.ArenaCommands;
 import net.frozenorb.potpvp.commands.binds.ChatColorProvider;
 import net.frozenorb.potpvp.commands.binds.UUIDDrinkProvider;
-import net.frozenorb.potpvp.commands.binds.impl.KitCommands;
-import net.frozenorb.potpvp.config.Lenguage;
+import net.frozenorb.potpvp.commands.impl.KitCommands;
+import net.frozenorb.potpvp.commands.impl.misc.SetLobbyCommand;
+import net.frozenorb.potpvp.commands.impl.profile.ProfileBuildCommand;
+import net.frozenorb.potpvp.config.Config;
+import net.frozenorb.potpvp.config.ScoreboardConfig;
 import net.frozenorb.potpvp.kit.KitHandler;
+import net.frozenorb.potpvp.lobby.LobbyListener;
+import net.frozenorb.potpvp.lobby.LobbyManager;
+import net.frozenorb.potpvp.profile.Profile;
+import net.frozenorb.potpvp.profile.listeners.ProfileListener;
 import net.frozenorb.potpvp.util.CC;
 import net.frozenorb.potpvp.util.ChunkSnapshotAdapter;
 import net.frozenorb.potpvp.util.config.impl.BasicConfigurationFile;
 import net.frozenorb.potpvp.util.menu.MenuListener;
+import net.frozenorb.potpvp.util.procedure.ProcedureListener;
 import net.frozenorb.potpvp.util.serialization.*;
 import net.frozenorb.potpvp.util.uuid.UUIDCache;
 import net.j4c0b3y.api.config.ConfigHandler;
@@ -35,7 +46,11 @@ import org.bukkit.util.Vector;
 import xyz.refinedev.command.CommandHandler;
 import xyz.refinedev.spigot.api.chunk.ChunkSnapshot;
 
+import java.util.Arrays;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 public final class PotPvPRP extends JavaPlugin {
@@ -70,10 +85,13 @@ public final class PotPvPRP extends JavaPlugin {
     public CommandHandler commandHandler;
     public ConfigHandler configHandler;
     public UUIDCache uuidCache;
-    public Lenguage lenguage;
+    public Config language;
     public KitHandler kitHandler;
+    public LobbyManager lobbyManager;
 
     private final ChatColor dominantColor = ChatColor.GOLD;
+
+    private ScheduledExecutorService executor;
 
 
     private BasicConfigurationFile hologramsConfig;
@@ -101,17 +119,24 @@ public final class PotPvPRP extends JavaPlugin {
         this.registerCommands();
         this.registerPermission();
 
+        Profile.init();
+
         this.configHandler = new ConfigHandler();
 
         configHandler.setKeyFormatter(key -> key.replace("_", "-"));
 
-        this.lenguage = new Lenguage("lenguage", configHandler);
-        lenguage.load();
+        this.language = new Config("lenguage", configHandler);
+        ScoreboardConfig scoreboardConfig = new ScoreboardConfig("scoreboard", configHandler);
+        scoreboardConfig.load();
+        language.load();
+        
 
         if (this.getServer().getPluginManager().isPluginEnabled("HolographicDisplays")) {
             this.logger("&7Found &cHolographicDisplays&7, Hooking holograms....");
             hologramsConfig = new BasicConfigurationFile(this, "holograms");
         }
+
+        this.lobbyManager = new LobbyManager(this);
 
         for (World world : Bukkit.getWorlds()) {
             world.setGameRuleValue("doDaylightCycle", "false");
@@ -119,10 +144,14 @@ public final class PotPvPRP extends JavaPlugin {
             world.setTime(6_000L);
         }
 
+        // Scoreboard load
+        this.executor = Executors.newScheduledThreadPool(1, new NameThreadFactory("Amber - BoardThread"));
+        this.executor.scheduleAtFixedRate(new BoardTask(), 0L, 100L, TimeUnit.MILLISECONDS);
+
 
         arenaHandler = new ArenaHandler();
 
-        this.getServer().getPluginManager().registerEvents(new MenuListener(this), this);
+        loadListeners();
         this.logger("Registering listeners...");
 
 
@@ -141,8 +170,20 @@ public final class PotPvPRP extends JavaPlugin {
     private void registerCommands() {
         commandHandler.register(new ArenaCommands(), "arena");
         commandHandler.register(new KitCommands(), "kit");
+        commandHandler.register(new ProfileBuildCommand(), "build");
+        commandHandler.register(new SetLobbyCommand(), "setlobby");
         commandHandler.registerCommands();
         this.logger("Registered commands!");
+    }
+
+    private void loadListeners() {
+        Arrays.asList(
+                new MenuListener(this),
+                new ProcedureListener(),
+                new ScoreboardListener(),
+                new ProfileListener(),
+                new LobbyListener()
+        ).forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
     }
 
     private void setupMongo() {

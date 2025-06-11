@@ -17,7 +17,7 @@ import java.util.List;
  *
  * @author ricadev
  * Created: 09/06/2025
- * Project: PotPvpReprised
+ * Project: Phyantom
  */
 @Getter
 @Setter
@@ -32,6 +32,7 @@ public class Kit {
     private ItemStack displayIcon;
     private List<String> description = new ArrayList<>();
     private Collection<PotionEffect> effects = new ArrayList<>();
+    private final KitLoadout kitLoadout = new KitLoadout();
     KitGameRules gameRules = new KitGameRules();
     private List<KitMatchType> kitMatchTypes = new ArrayList<>();
     private int slot;

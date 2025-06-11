@@ -1,4 +1,4 @@
-package net.frozenorb.potpvp.commands.binds.impl;
+package net.frozenorb.potpvp.commands.impl;
 
 
 import net.frozenorb.potpvp.PotPvPRP;
