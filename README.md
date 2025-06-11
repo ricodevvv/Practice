@@ -2,7 +2,7 @@
 
 ## TO-DO LIST
 
-- Rename PotPvPRP to Phantom
+- Rename PotPvPRP, PotPvP-SI to Phantom
 - Rename classes
 
 
