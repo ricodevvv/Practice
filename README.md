@@ -2,7 +2,8 @@
 
 ## TO-DO LIST
 
-- Make this
+- Rename PotPvPRP to Phantom
+- Rename classes
 
 
 
