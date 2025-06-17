@@ -122,11 +122,12 @@ public final class Phantom extends JavaPlugin {
         this.consoleLog("&c------------------------------------------------");
         this.configHandler = new ConfigHandler();
         configHandler.setKeyFormatter(key -> key.replace("_", "-"));
+        configHandler.setKeyFormatter(CC::translate);
         databaseConfig = new DatabaseConfig("database", configHandler);
         databaseConfig.load();
         this.setupMongo();
 
-        this.language = new Config("lenguage", configHandler);
+        this.language = new Config("config", configHandler);
         Lenguaje lang = new Lenguaje("lang", configHandler);
         Scoreboard scoreboard = new Scoreboard("scoreboard", configHandler);
         scoreboard.load();
