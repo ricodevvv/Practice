@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>dev.stone.practice</groupId>
     <artifactId>Phantom</artifactId>
-    <name>PotPvP Reprised</name>
-    <version>1.0-SNAPSHOT</version>
+    <name>Phantom</name>
+    <version>1.2.1-Beta</version>
 
     <properties>
         <kotlin.version>1.3.11</kotlin.version>
