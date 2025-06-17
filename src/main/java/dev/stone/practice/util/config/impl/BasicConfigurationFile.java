@@ -35,18 +35,7 @@ public class BasicConfigurationFile extends AbstractConfigurationFile {
     public BasicConfigurationFile(JavaPlugin plugin, String name) {
         this(plugin, name, false);
     }
-
-    public void applyHeader() {
-        configuration.options().header(
-                "#####################################################################\n" +
-                        "                                                                     #\n" +
-                        "          Array Practice Core - Developed By Drizzy#0278             #\n" +
-                        "       Bought at Refine Development - https://dsc.gg/refine          #\n" +
-                        "                                                                     #\n" +
-                        "#####################################################################");
-        save();
-    }
-
+    
     public String getString(String path) {
         return this.configuration.contains(path) ? ChatColor.translateAlternateColorCodes('&', this.configuration.getString(path)) : null;
     }
