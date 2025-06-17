@@ -24,8 +24,6 @@ public class BasicConfigurationFile extends AbstractConfigurationFile {
         this.configuration = YamlConfiguration.loadConfiguration(this.file);
 
         configuration.options().copyDefaults(true);
-
-        this.applyHeader();
     }
 
     public BasicConfigurationFile(JavaPlugin plugin, String name, boolean overwrite) {
@@ -35,7 +33,7 @@ public class BasicConfigurationFile extends AbstractConfigurationFile {
     public BasicConfigurationFile(JavaPlugin plugin, String name) {
         this(plugin, name, false);
     }
-    
+
     public String getString(String path) {
         return this.configuration.contains(path) ? ChatColor.translateAlternateColorCodes('&', this.configuration.getString(path)) : null;
     }
