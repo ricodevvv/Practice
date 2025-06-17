@@ -3,8 +3,7 @@ package dev.stone.practice.profile.listeners;
 import dev.stone.practice.Phantom;
 import dev.stone.practice.profile.PlayerProfile;
 import dev.stone.practice.profile.ProfileState;
-import dev.stone.practice.util.Checker;
-import dev.stone.practice.util.Util;
+import dev.stone.practice.util.*;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -33,35 +32,44 @@ public class ProfileListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) {
-        PlayerProfile profile = new PlayerProfile(event.getUniqueId());
         try {
+            PlayerProfile profile = new PlayerProfile(event.getUniqueId());
             profile.load();
+            PlayerProfile.getProfiles().put(event.getUniqueId(), profile);
         } catch (Exception e) {
             e.printStackTrace();
             event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
             event.setKickMessage(ChatColor.RED + "Failed to load your profile. Try again later.");
             return;
         }
+    }
 
-        PlayerProfile.getProfiles().put(event.getUniqueId(), profile);
+    @EventHandler
+    public void PlayerJoin(PlayerJoinEvent event) {
+        event.setJoinMessage(null);
+        Player player = event.getPlayer();
+        //Reset their inventory and their location, to prevent player stuck in other places or contains illegal items
+        PlayerUtil.reset(player);
+        Phantom.getInstance().getLobbyManager().teleport(player);
+        try {
+            Phantom.getInstance().getLobbyManager().sendToSpawnAndReset(player);
+        } catch (Exception e) {
+            Common.log("An error ocurred in " + getClass().getSimpleName() + "" + e.getMessage());
+        }
     }
 
     @EventHandler
     public void OnPlayerQuit(PlayerQuitEvent event) {
         event.setQuitMessage(null);
         Player player = event.getPlayer();
-
         PlayerProfile profile = PlayerProfile.getProfiles().get(player.getUniqueId());
-
         if(profile == null) return;
-
         new BukkitRunnable() {
             @Override
             public void run() {
                 profile.save();
             }
         }.runTaskAsynchronously(Phantom.getInstance());
-
         PlayerProfile.getProfiles().remove(player.getUniqueId());
     }
 

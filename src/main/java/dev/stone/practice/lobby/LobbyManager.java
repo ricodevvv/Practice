@@ -31,7 +31,6 @@ public class LobbyManager {
         try {
             this.spawnLocation = LocationSerialization.deserializeLocation(Config.LOBBY_LOCATION);
         } catch (Exception e) {
-
             Common.log("Unable to deserialize spawn-location from location file. " + e.getMessage());
         }
     }
@@ -53,7 +52,7 @@ public class LobbyManager {
         PlayerUtil.reset(player);
         profile.setMatch(null);
         profile.setState(ProfileState.LOBBY);
-      //  profile.setupItems();
+        profile.setupItems();
         profile.getCooldowns().forEach((name, cooldown) -> cooldown.cancelCountdown());
     }
 

@@ -5,11 +5,28 @@ import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import dev.stone.practice.adapter.board.NameThreadFactory;
+import dev.stone.practice.adapter.board.listener.ScoreboardListener;
+import dev.stone.practice.adapter.board.task.BoardTask;
+import dev.stone.practice.arena.ArenaHandler;
+import dev.stone.practice.commands.binds.ChatColorProvider;
+import dev.stone.practice.commands.binds.UUIDDrinkProvider;
+import dev.stone.practice.commands.impl.ArenaCommands;
+import dev.stone.practice.commands.impl.KitCommands;
+import dev.stone.practice.commands.impl.dev.MatchDebugCommand;
+import dev.stone.practice.commands.impl.misc.SetLobbyCommand;
+import dev.stone.practice.commands.impl.profile.ProfileBuildCommand;
+import dev.stone.practice.commands.impl.queue.QueueCommands;
+import dev.stone.practice.config.Config;
 import dev.stone.practice.config.DatabaseConfig;
+import dev.stone.practice.config.Lenguaje;
 import dev.stone.practice.config.Scoreboard;
+import dev.stone.practice.kit.KitHandler;
+import dev.stone.practice.lobby.LobbyListener;
+import dev.stone.practice.lobby.LobbyManager;
 import dev.stone.practice.match.MatchHandler;
-import dev.stone.practice.match.listener.blocks.BlockFromTo;
 import dev.stone.practice.match.listener.blocks.BlockBreak;
+import dev.stone.practice.match.listener.blocks.BlockFromTo;
 import dev.stone.practice.match.listener.blocks.BlockPlace;
 import dev.stone.practice.match.listener.blocks.BucketEmpty;
 import dev.stone.practice.match.listener.custom.MatchStartListener;
@@ -18,33 +35,16 @@ import dev.stone.practice.match.listener.player.PlayerDeathEvent;
 import dev.stone.practice.match.listener.player.PlayerMove;
 import dev.stone.practice.match.listener.player.PlayerQuitEvent;
 import dev.stone.practice.match.listener.potion.PotionListener;
-import dev.stone.practice.util.serialization.*;
-import lombok.Getter;
-import dev.stone.practice.adapter.board.NameThreadFactory;
-import dev.stone.practice.adapter.board.listener.ScoreboardListener;
-import dev.stone.practice.adapter.board.task.BoardTask;
-import dev.stone.practice.arena.ArenaHandler;
-import dev.stone.practice.commands.impl.ArenaCommands;
-import dev.stone.practice.commands.binds.ChatColorProvider;
-import dev.stone.practice.commands.binds.UUIDDrinkProvider;
-import dev.stone.practice.commands.impl.KitCommands;
-import dev.stone.practice.commands.impl.dev.MatchDebugCommand;
-import dev.stone.practice.commands.impl.misc.SetLobbyCommand;
-import dev.stone.practice.commands.impl.profile.ProfileBuildCommand;
-import dev.stone.practice.config.Config;
-import dev.stone.practice.config.Lenguaje;
-import dev.stone.practice.kit.KitHandler;
-import dev.stone.practice.lobby.LobbyListener;
-import dev.stone.practice.lobby.LobbyManager;
 import dev.stone.practice.profile.PlayerProfile;
 import dev.stone.practice.profile.listeners.ProfileListener;
+import dev.stone.practice.queue.Queue;
 import dev.stone.practice.util.CC;
 import dev.stone.practice.util.ChunkSnapshotAdapter;
 import dev.stone.practice.util.config.impl.BasicConfigurationFile;
 import dev.stone.practice.util.menu.MenuListener;
 import dev.stone.practice.util.procedure.ProcedureListener;
-
-import dev.stone.practice.util.uuid.UUIDCache;
+import dev.stone.practice.util.serialization.*;
+import lombok.Getter;
 import net.j4c0b3y.api.config.ConfigHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -99,13 +99,12 @@ public final class Phantom extends JavaPlugin {
     private ArenaHandler arenaHandler;
     public CommandHandler commandHandler;
     public ConfigHandler configHandler;
-    public UUIDCache uuidCache;
     public Config language;
     public KitHandler kitHandler;
     public LobbyManager lobbyManager;
     public MatchHandler matchHandler;
     public DatabaseConfig databaseConfig;
-
+    public BasicConfigurationFile hotbar;
     private final ChatColor dominantColor = ChatColor.GOLD;
 
     private ScheduledExecutorService executor;
@@ -127,13 +126,13 @@ public final class Phantom extends JavaPlugin {
         databaseConfig.load();
         this.setupMongo();
 
-        this.uuidCache = new UUIDCache();
         this.language = new Config("lenguage", configHandler);
         Lenguaje lang = new Lenguaje("lang", configHandler);
         Scoreboard scoreboard = new Scoreboard("scoreboard", configHandler);
         scoreboard.load();
         lang.load();
         language.load();
+        this.hotbar = new BasicConfigurationFile(this, "hotbar");
 
         this.commandHandler = new CommandHandler(this);
         this.commandHandler.bind(ChatColor.class).toProvider(new ChatColorProvider());
@@ -148,6 +147,7 @@ public final class Phantom extends JavaPlugin {
         this.logger("Registering listeners...");
 
         PlayerProfile.init();
+        Queue.init();
 
         this.lobbyManager = new LobbyManager(this);
 
@@ -183,6 +183,7 @@ public final class Phantom extends JavaPlugin {
         commandHandler.register(new ProfileBuildCommand(), "build");
         commandHandler.register(new SetLobbyCommand(), "setlobby");
         commandHandler.register(new MatchDebugCommand(), "debugmatch");
+        commandHandler.register(new QueueCommands(), "queue");
         commandHandler.registerCommands();
         this.logger("Registered commands!");
     }

@@ -108,7 +108,7 @@ public abstract class Match {
             player.setMaximumNoDamageTicks(kit.getDamageTicks());
 
             if (kit.getGameRules().isReceiveKitLoadoutBook()) {
-                for (ItemStack itemStack : profile.getKitData().get(kit.getName()).getKitItems(kit)) {
+                for (ItemStack itemStack : profile.getKitData().get(kit).getKitItems(kit)) {
                     if (itemStack.getType().equals(Material.BOOK)) {
                         player.getInventory().setItem(8, itemStack);
                     } else {

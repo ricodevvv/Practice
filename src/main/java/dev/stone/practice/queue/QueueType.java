@@ -1,5 +1,8 @@
 package dev.stone.practice.queue;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * This Project is property of Desroyed Development © 2025
  * Redistribution of this Project is not allowed
@@ -8,7 +11,14 @@ package dev.stone.practice.queue;
  * Created: 11/06/2025
  * Project: Practice
  */
+@Getter
+@AllArgsConstructor
 public enum QueueType {
-    UNRANKED,
-    RANKED
+
+    UNRANKED("Unranked"),
+    RANKED("Ranked"),
+    ;
+
+    private final String readable;
+
 }

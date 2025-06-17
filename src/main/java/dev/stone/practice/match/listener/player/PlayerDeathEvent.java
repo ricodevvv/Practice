@@ -2,6 +2,7 @@ package dev.stone.practice.match.listener.player;
 
 import dev.stone.practice.kit.KitGameRules;
 import dev.stone.practice.match.Match;
+import dev.stone.practice.match.task.MatchRespawnTask;
 import dev.stone.practice.match.team.TeamPlayer;
 import dev.stone.practice.profile.PlayerProfile;
 import dev.stone.practice.profile.ProfileState;
@@ -38,7 +39,7 @@ public class PlayerDeathEvent implements Listener {
             TeamPlayer teamPlayer = match.getTeamPlayer(player);
             KitGameRules gameRules = match.getKit().getGameRules();
             if ((gameRules.isBed() && !match.getTeam(player).isBedDestroyed()) || gameRules.isBreakGoal() || gameRules.isPortalGoal()) {
-            //    new MatchRespawnTask(match, teamPlayer);
+                new MatchRespawnTask(match, teamPlayer);
             } else if (gameRules.isPoint(match)) {
                 TeamPlayer lastHitDamager = teamPlayer.getLastHitDamager();
                 //Players have a chance to die without being attacked by the enemy, such as lava. If so, just randomly draw a player from the enemy team.

@@ -50,10 +50,10 @@ public class BlockPlace implements Listener {
                 event.setCancelled(true);
                 return;
             }
-         /*   if (match.isProtected(block.getLocation(), true, block)) {
+            if (match.isProtected(block.getLocation(), true, block)) {
                 event.setCancelled(true);
                 return;
-            } */
+            }
 
             if (block.getType() == Material.TNT) {
                 ItemStack itemStack = player.getItemInHand();

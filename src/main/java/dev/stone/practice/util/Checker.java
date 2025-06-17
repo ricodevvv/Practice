@@ -3,6 +3,7 @@ package dev.stone.practice.util;
 import dev.stone.practice.match.MatchState;
 import dev.stone.practice.profile.PlayerProfile;
 import dev.stone.practice.profile.ProfileState;
+import dev.stone.practice.queue.QueueType;
 import org.bukkit.entity.Player;
 
 /**
@@ -22,5 +23,14 @@ public class Checker {
                 && profile.getMatch().getTeamPlayer(player).isAlive()
                 && !profile.getMatch().getTeamPlayer(player).isRespawning()
                 && profile.getMatch().getState() == MatchState.FIGHTING;
+    }
+
+    public static boolean isQueueType(String index) {
+        try {
+            QueueType.valueOf(index.toUpperCase());
+            return true;
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 }

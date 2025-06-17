@@ -33,6 +33,8 @@ public class Config extends StaticConfig {
             "Use /help for recive help"
     );
 
+    public static int RANKED_WINS_REQUIRED = 10;
+
     @Comment("For developers only, do not touch")
     public static boolean LOBBY_DISPLAY_PLAYERS = true;
 

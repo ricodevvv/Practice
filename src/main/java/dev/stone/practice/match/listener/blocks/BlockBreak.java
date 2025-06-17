@@ -63,7 +63,7 @@ public class BlockBreak implements Listener {
             if (block.getType() == Material.BED_BLOCK) {
                 //Now get the bed location
                 Location bedLocation1 = new Location(block.getLocation().getWorld(), block.getLocation().getBlockX(), block.getLocation().getBlockY(), block.getLocation().getBlockZ());
-                Location bedLocation2 = Util.getBedBlockNearBy(bedLocation1).clone(); //因為一張床等於兩個方塊, 所以需要床的另一邊位置
+                Location bedLocation2 = Util.getBedBlockNearBy(bedLocation1).clone();
 
                 Team team = match.getTeam(player);
                 Team opponentTeam = match.getTeams().stream().min(Comparator.comparing(t -> t.getSpawnLocation().distance(bedLocation1))).orElse(null);
@@ -82,8 +82,11 @@ public class BlockBreak implements Listener {
                     match.broadcastTitle(opponentTeam, Lenguaje.MATCH_MESSAGES.BED_BREAK_TITLE);
                     match.broadcastSubTitle(opponentTeam, Lenguaje.MATCH_MESSAGES.BED_BREAK_SUBTITLE);
                     for (String line : Lenguaje.MATCH_MESSAGES.BED_BREAK_MESSAGE) {
-                        match.broadcastMessage(line.replaceAll("<team>", opponentTeam.getTeamColor().getTeamName())
-                                .replace("<player>", player.getName()));
+                        match.broadcastMessage(line.replaceAll("<team>", String.valueOf(opponentTeam.getTeamColor().getColor()))
+                                .replace("<player>", player.getName())
+                                .replace("<bed_team>", opponentTeam.getTeamColor().getTeamName())
+
+                        );
                     }
                     opponentTeam.setBedDestroyed(true);
                     bedLocation1.getBlock().setType(Material.AIR);

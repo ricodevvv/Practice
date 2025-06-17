@@ -7,7 +7,8 @@ import com.google.gson.JsonParser;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
-import com.sun.media.jfxmedia.events.PlayerStateEvent;
+import dev.stone.practice.hotbar.Hotbar;
+import dev.stone.practice.party.Party;
 import dev.stone.practice.profile.cooldown.Cooldown;
 import dev.stone.practice.profile.cooldown.CooldownType;
 import dev.stone.practice.util.VisibilityController;
@@ -53,6 +54,7 @@ public class PlayerProfile {
     private ProfileState state;
     private Match match;
     private final Map<Kit, ProfileKitData> kitData;
+    private Party party;
 
 
     /**
@@ -138,6 +140,14 @@ public class PlayerProfile {
         this.experience = 0;
         this.level = 0;
 
+        for (Kit kit : KitHandler.getKits()) {
+            kitData.put(kit, new ProfileKitData());
+        }
+        //Setup all default cooldown
+        for (CooldownType type : CooldownType.values()) {
+            cooldowns.put(type, new Cooldown(0));
+        }
+
     }
 
     public Player getPlayer() {
@@ -181,14 +191,12 @@ public class PlayerProfile {
         for (String key : kitStatistics.keySet()) {
             Document kitDocument = (Document) kitStatistics.get(key);
             Kit kit = KitHandler.getByName(key);
-
             if (kit != null) {
                 ProfileKitData profileKitData = new ProfileKitData();
                 profileKitData.setElo(((Integer) kitDocument.get("elo")).intValue());
                 profileKitData.setUnrankedWon(((Integer) kitDocument.get("won")).intValue());
                 profileKitData.setUnrankedLost(((Integer) kitDocument.get("lost")).intValue());
                 profileKitData.setWinstreak(((Integer) kitDocument.get("winstreak")).intValue());
-
                 kitData.put(kit, profileKitData);
             }
         }
@@ -291,6 +299,41 @@ public class PlayerProfile {
         }
     }
 
+    public void setupItems() {
+        Player player = getPlayer();
+        PlayerProfile profile = PlayerProfile.get(player);
+        if (player == null) {
+            return;
+        }
+        player.getInventory().clear();
+        player.getInventory().setArmorContents(null);
+
+        if (state == ProfileState.LOBBY) {
+            if (Party.getByPlayer(player) == null) {
+                Hotbar.giveItem(player, Hotbar.LOBBY_UNRANKED_QUEUE);
+                Hotbar.giveItem(player, Hotbar.LOBBY_RANKED_QUEUE);
+                Hotbar.giveItem(player, Hotbar.LOBBY_PARTY_OPEN);
+                Hotbar.giveItem(player, Hotbar.LOBBY_LEADERBOARD);
+                Hotbar.giveItem(player, Hotbar.LOBBY_SETTINGS);
+                Hotbar.giveItem(player, Hotbar.LOBBY_EDITOR);
+            } else {
+                Hotbar.giveItem(player, Hotbar.PARTY_PARTY_LIST);
+                Hotbar.giveItem(player, Hotbar.PARTY_PARTY_FIGHT);
+                Hotbar.giveItem(player, Hotbar.PARTY_OTHER_PARTIES);
+                Hotbar.giveItem(player, Hotbar.PARTY_EDITOR);
+                Hotbar.giveItem(player, Hotbar.PARTY_PARTY_LEAVE);
+            }
+        } else if (state == ProfileState.QUEUEING) {
+            Hotbar.giveItem(player, Hotbar.QUEUE_LEAVE_QUEUE);
+        } else if (state == ProfileState.FIGHTING && match != null && !match.getTeamPlayer(getPlayer()).isAlive()) {
+            Hotbar.giveItem(player, Hotbar.SPECTATE_TELEPORTER);
+        } else if (state == ProfileState.SPECTATING && match != null) {
+            Hotbar.giveItem(player, Hotbar.SPECTATE_TELEPORTER);
+            Hotbar.giveItem(player, Hotbar.SPECTATE_LEAVE_SPECTATE);
+         //   EdenItems.giveItem(player, settings.get(ProfileSettings.SPECTATOR_VISIBILITY).isEnabled() ? EdenItems.SPECTATE_TOGGLE_VISIBILITY_OFF : EdenItems.SPECTATE_TOGGLE_VISIBILITY_ON);
+        }
+        player.updateInventory();
+    }
 
     /**
      * set the status of a player
