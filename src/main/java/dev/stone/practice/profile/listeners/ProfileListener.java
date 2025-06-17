@@ -1,7 +1,7 @@
 package dev.stone.practice.profile.listeners;
 
 import dev.stone.practice.Phantom;
-import dev.stone.practice.profile.Profile;
+import dev.stone.practice.profile.PlayerProfile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.util.Checker;
 import dev.stone.practice.util.Util;
@@ -33,8 +33,7 @@ public class ProfileListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) {
-        Profile profile = new Profile(event.getUniqueId());
-
+        PlayerProfile profile = new PlayerProfile(event.getUniqueId());
         try {
             profile.load();
         } catch (Exception e) {
@@ -44,7 +43,7 @@ public class ProfileListener implements Listener {
             return;
         }
 
-        Profile.getProfiles().put(event.getUniqueId(), profile);
+        PlayerProfile.getProfiles().put(event.getUniqueId(), profile);
     }
 
     @EventHandler
@@ -52,7 +51,7 @@ public class ProfileListener implements Listener {
         event.setQuitMessage(null);
         Player player = event.getPlayer();
 
-        Profile profile = Profile.getProfiles().get(player.getUniqueId());
+        PlayerProfile profile = PlayerProfile.getProfiles().get(player.getUniqueId());
 
         if(profile == null) return;
 
@@ -63,7 +62,7 @@ public class ProfileListener implements Listener {
             }
         }.runTaskAsynchronously(Phantom.getInstance());
 
-        Profile.getProfiles().remove(player.getUniqueId());
+        PlayerProfile.getProfiles().remove(player.getUniqueId());
     }
 
     @EventHandler
@@ -91,15 +90,15 @@ public class ProfileListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        Profile profile = Profile.getByUuid(player.getUniqueId());
-        if (profile.getState() != ProfileState.FIGHTING) {
+        PlayerProfile profile = PlayerProfile.getByUuid(player.getUniqueId());
+        if (profile.getState() == ProfileState.LOBBY) {
             event.setCancelled(!profile.isBuild());
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBreak(BlockBreakEvent event) {
-    Profile profile = Profile.getByUuid(event.getPlayer().getUniqueId());
+    PlayerProfile profile = PlayerProfile.getByUuid(event.getPlayer().getUniqueId());
         if (!Checker.canDamage(event.getPlayer())) {
             event.setCancelled(!profile.isBuild());
         }
@@ -124,7 +123,7 @@ public class ProfileListener implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        Profile profile = Profile.getByUuid(player.getUniqueId());
+        PlayerProfile profile = PlayerProfile.getByUuid(player.getUniqueId());
 
         if(profile.getState() != ProfileState.FIGHTING) {
             event.setCancelled(!profile.isBuild());
@@ -133,8 +132,6 @@ public class ProfileListener implements Listener {
         if (item == null) {
             return;
         }
-
-
 
         if (event.getAction().name().startsWith("RIGHT_")) {
             net.minecraft.server.v1_8_R3.ItemStack nmsItem = CraftItemStack.asNMSCopy(item);

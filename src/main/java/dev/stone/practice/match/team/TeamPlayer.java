@@ -5,7 +5,7 @@ import lombok.Setter;
 import dev.stone.practice.config.Config;
 import dev.stone.practice.kit.KitLoadout;
 import dev.stone.practice.match.Match;
-import dev.stone.practice.profile.Profile;
+import dev.stone.practice.profile.PlayerProfile;
 import dev.stone.practice.util.Tasks;
 import dev.stone.practice.util.TitleSender;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
@@ -57,8 +57,8 @@ public class TeamPlayer {
         return Bukkit.getPlayer(uuid);
     }
 
-    public Profile getPlayerProfile() {
-        return Profile.getByUuid(uuid);
+    public PlayerProfile getPlayerProfile() {
+        return PlayerProfile.getByUuid(uuid);
     }
 
     public int getPing() {

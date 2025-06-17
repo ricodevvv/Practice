@@ -1,11 +1,14 @@
 package dev.stone.practice.match.task;
 
+import dev.stone.practice.config.Lenguaje;
 import dev.stone.practice.events.MatchRoundEndEvent;
+import dev.stone.practice.events.MatchRoundStartEvent;
 import dev.stone.practice.match.Match;
 import dev.stone.practice.match.MatchState;
 import dev.stone.practice.match.MatchTaskTicker;
 import dev.stone.practice.match.team.Team;
 import dev.stone.practice.match.team.TeamPlayer;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 /**
@@ -42,16 +45,16 @@ public class MatchNewRoundTask extends MatchTaskTicker {
             match.setState(MatchState.FIGHTING);
           //  match.broadcastSound(EdenSound.MATCH_START);
 
-         //   MatchRoundStartEvent event = new MatchRoundStartEvent(match);
-           // event.call();
+           MatchRoundStartEvent event = new MatchRoundStartEvent(match);
+            event.call();
 
             cancel();
             return;
         }
 
-      //  match.broadcastMessage(Language.MATCH_NEW_ROUND_START_COUNTDOWN.toString(getTicks()));
-      //  match.broadcastTitle(Language.MATCH_NEW_ROUND_START_TITLE.toString(getTicks()));
-     //   match.broadcastSound(EdenSound.NEW_ROUND_COUNTDOWN);
+        match.broadcastMessage(Lenguaje.MATCH_MESSAGES.START_COUNTDOWN.replace("<seconds>", String.valueOf(getTicks())));
+        match.broadcastTitle(Lenguaje.MATCH_MESSAGES.START_TITLE.replace("<seconds>", String.valueOf(getTicks())));
+        match.broadcastSound(Sound.CLICK);
     }
 
     @Override

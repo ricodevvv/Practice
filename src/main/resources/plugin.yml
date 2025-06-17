@@ -1,7 +1,7 @@
 name: PotPvP
 author: Drizzy, MineHQ
 version: 1.8.8
-main: net.frozenorb.potpvp.PotPvPRP
+main: dev.stone.practice.Phantom
 depend:
   - ProtocolLib
 softdepend:

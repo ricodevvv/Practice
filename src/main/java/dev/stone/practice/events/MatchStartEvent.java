@@ -13,6 +13,7 @@ import dev.stone.practice.util.BaseEvent;
  * Created: 11/06/2025
  * Project: Practice
  */
+
 @Getter
 @RequiredArgsConstructor
 public class MatchStartEvent extends BaseEvent {

@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.craftbukkit.v1_8_R3.util.LongHash;
 import com.google.common.base.Preconditions;
@@ -28,6 +29,7 @@ import dev.stone.practice.util.AngleUtils;
  * See {@link net.frozenorb.potpvp.arena} for a comparision of
  * {@link Arena}s and {@link ArenaSchematic}s.
  */
+@Getter
 public final class Arena {
 
     /**
@@ -77,6 +79,14 @@ public final class Arena {
     @Getter
     private List<Location> eventSpawns;
 
+    private int deadzone;
+    private int maxbuild;
+    private int portalProtecion = 5;
+    private Location cageBlueMin = null;
+    private Location cageBlueMax = null;
+    private Location cageRedMin = null;
+    private Location cageRedMax = null;
+
     /**
      * If this arena is currently being used
      *
@@ -101,6 +111,8 @@ public final class Arena {
         this.bounds = Preconditions.checkNotNull(bounds);
 
         scanLocations();
+        this.maxbuild = calculateMaxBuild();
+        this.deadzone = calculateDeadzone();
     }
 
     public Location getSpectatorSpawn() {
@@ -132,6 +144,29 @@ public final class Arena {
         // its iterator is broken :(
         forEachBlock(block -> {
             Material type = block.getType();
+
+            if (block.getState() instanceof Sign) {
+                org.bukkit.block.Sign sign = (org.bukkit.block.Sign) block.getState();
+                for (String line : sign.getLines()) {
+                    if (line == null) continue;
+
+                    String lower = line.toLowerCase();
+
+                    if (lower.contains("cage_blue_min")) {
+                        cageBlueMin = block.getLocation().clone();
+                        block.setType(Material.AIR);
+                    } else if (lower.contains("cage_blue_max")) {
+                        cageBlueMax = block.getLocation().clone();
+                        block.setType(Material.AIR);
+                    } else if (lower.contains("cage_red_min")) {
+                        cageRedMin = block.getLocation().clone();
+                        block.setType(Material.AIR);
+                    } else if (lower.contains("cage_red_max")) {
+                        cageRedMax = block.getLocation().clone();
+                        block.setType(Material.AIR);
+                    }
+                }
+            }
 
             if (type != Material.SKULL) {
                 return;
@@ -182,6 +217,27 @@ public final class Arena {
                     if (!(eventSpawns.contains(skullLocation))) {
                         eventSpawns.add(skullLocation);
                     }
+                    break;
+                case WITHER:
+                    team1Spawn = skullLocation;
+
+                    block.setType(Material.AIR);
+
+                    if (below.getType() == Material.FENCE) {
+                        below.setType(Material.AIR);
+                    }
+
+                    break;
+                case ZOMBIE:
+                    team2Spawn = skullLocation;
+
+                    block.setType(Material.AIR);
+
+                    if (below.getType() == Material.FENCE) {
+                        below.setType(Material.AIR);
+                    }
+
+                    break;
                 default:
                     break;
             }
@@ -249,9 +305,7 @@ public final class Arena {
         return Objects.hash(schematic, copy);
     }
 
-
     /**
-     *
      * @return ArenaSchematic linked to this arena
      */
     public ArenaSchematic getParentArena() {
@@ -259,4 +313,21 @@ public final class Arena {
         return Phantom.getInstance().getArenaHandler().getSchematic(getSchematic());
     }
 
+    /**
+     *
+     * @return
+     */
+    public int calculateMaxBuild() {
+        Location spec = getSpectatorSpawn().clone();
+        return spec.getBlockY() - 2;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public int calculateDeadzone() {
+        Location spec = getSpectatorSpawn().clone();
+        return spec.getBlockY() - 20;
+    }
 }

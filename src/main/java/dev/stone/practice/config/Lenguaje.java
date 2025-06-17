@@ -33,6 +33,17 @@ public class Lenguaje extends StaticConfig {
     }
 
     public static class MATCH_MESSAGES {
+        public static String RESPAWN_IN_MESSAGE = "<theme>Respawn in <seconds>";
+        public static String CANNOT_BREAK_OWN_BED = "&cYou cannot break your own bed!";
+        public static String BED_BREAK_TITLE = "&cBed Destroyed！";
+        public static String BED_BREAK_SUBTITLE = "&fYou will not respawn after die！";
+        public static List<String> BED_BREAK_MESSAGE = Arrays.asList(
+          "",
+          "&f&lBed Destroyed > {0}'s bed &7has been destroyed by <team><player>!",
+          ""
+        );
+        public static String RESPAWN_IN_TITLE = "&cYou Died";
+        public static String RESPAWN_IN_SUBTITLE = "&c<seconds>";
         public static List<String> START_MESSAGE = Arrays.asList(
           "",
           "<gamemode>",
@@ -40,6 +51,13 @@ public class Lenguaje extends StaticConfig {
           "&9 • &7Map: &b<arena>",
           "&9 • &7Opponent(s): &b<opponent>"
         );
+        public static String START_COUNTDOWN = "&e<seconds>";
+        public static String START_TITLE = "&e<seconds>";
+        public static String WINNER_END_TITLE = "&aVICTORY!";
+        public static String WINNER_END_SUBTITLE = "&a<winner> &fwin the match!";
+        public static String LOSER_END_TITLE = "&cDEFEAT!";
+        public static String LOSER_END_SUBTITLE = "&a<winner> &fwin the match!";
+        public static String WINNER_END_TITLE_LOSER = "";
         public static String END_FORCE = "&cThe match is cancelled! Reason: <reason> (Your stats related to this match will not be saved)";
         public static String NAMETAG_OTHER = "&e";
         public static String NAMETAG_TEAMMATE = "&a";

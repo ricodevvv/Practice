@@ -56,6 +56,7 @@ public final class ArenaSchematic {
 
     public ArenaSchematic(String name) {
         this.name = Preconditions.checkNotNull(name, "name");
+        this.displayName = name;
     }
 
     public File getSchematicFile() {

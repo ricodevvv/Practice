@@ -1,7 +1,7 @@
 package dev.stone.practice.commands.impl.profile;
 
 import dev.stone.practice.commands.PotPvPCommand;
-import dev.stone.practice.profile.Profile;
+import dev.stone.practice.profile.PlayerProfile;
 import dev.stone.practice.util.CC;
 import org.bukkit.entity.Player;
 import xyz.refinedev.command.annotation.Command;
@@ -21,7 +21,7 @@ public class ProfileBuildCommand implements PotPvPCommand {
     @Command(name = "", desc = "activate construction mode for your profile")
     @Require("phantom.profile.build")
     public void BuilcDommandExecute(@Sender Player player) {
-        Profile profile = Profile.getByUuid(player.getUniqueId());
+        PlayerProfile profile = PlayerProfile.getByUuid(player.getUniqueId());
         if(profile == null) return;
         profile.setBuild(!profile.isBuild());
         player.sendMessage("Build mode " + (profile.isBuild() ? CC.GREEN + "Enabled" : CC.RED + "Disabled") + ".");

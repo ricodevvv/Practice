@@ -6,9 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import dev.stone.practice.Phantom;
 import dev.stone.practice.config.Config;
-import dev.stone.practice.profile.Profile;
+import dev.stone.practice.profile.PlayerProfile;
 import dev.stone.practice.profile.ProfileState;
-import net.frozenorb.potpvp.util.*;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -47,18 +46,15 @@ public class LobbyManager {
     }
 
     public void reset(Player player) {
-        Profile profile = Profile.getByUuid(player.getUniqueId());
-
+        PlayerProfile profile = PlayerProfile.getByUuid(player.getUniqueId());
         if (profile == null) {
             return;
         }
-
-        PlayerUtils.resetInventory(player);
-
+        PlayerUtil.reset(player);
         profile.setMatch(null);
         profile.setState(ProfileState.LOBBY);
       //  profile.setupItems();
-       // profile.getCooldowns().forEach((name, cooldown) -> cooldown.cancelCountdown());
+        profile.getCooldowns().forEach((name, cooldown) -> cooldown.cancelCountdown());
     }
 
     public void sendToSpawnAndReset(Player player) {

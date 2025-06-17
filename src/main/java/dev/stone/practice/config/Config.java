@@ -26,6 +26,8 @@ public class Config extends StaticConfig {
             "Use /help for recive help"
     );
 
+    public static boolean LOBBY_DISPLAY_PLAYERS = true;
+
     public static int DEFAULT_GLOBAL_ELO = 1000;
 
     public static boolean DEBUG = false;
@@ -33,6 +35,13 @@ public class Config extends StaticConfig {
     public static class MATCH_SETTINGS {
         public static int END_DURATION = 100;
     }
+
+    public static List<String > MATCH_ALLOW_BREAK_BLOCKS = Arrays.asList(
+            "DEAD_BUSH",
+            "GRASS",
+            "LONG_GRASS",
+            "CACTUS"
+    );
 
     public static String LOBBY_LOCATION = "null";
 
@@ -43,6 +52,12 @@ public class Config extends StaticConfig {
     }
 
     public static class EXPLOSIVE_CONFIG {
-        public static double TNT_VERTICAL = 2.0;
+       public static class TNT_CONFIG {
+           public static double VERTICAL = 2.0;
+           public static double YIELD = 4.0;
+           public static int FUSE_TICKS = 50;
+
+       }
+
     }
 }

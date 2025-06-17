@@ -1,5 +1,8 @@
 package dev.stone.practice.match;
 
+import dev.stone.practice.config.Config;
+import dev.stone.practice.match.task.MatchRespawnTask;
+import dev.stone.practice.profile.cooldown.CooldownType;
 import dev.stone.practice.util.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +19,7 @@ import dev.stone.practice.match.task.MatchResetTask;
 import dev.stone.practice.match.team.Team;
 import dev.stone.practice.match.team.TeamColor;
 import dev.stone.practice.match.team.TeamPlayer;
-import dev.stone.practice.profile.Profile;
+import dev.stone.practice.profile.PlayerProfile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.queue.QueueType;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
@@ -24,11 +27,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -45,7 +48,7 @@ public abstract class Match {
 
     protected final Phantom plugin = Phantom.getInstance();
 
-    @Getter private static final Map<UUID, Match> matches = new ConcurrentHashMap<>();
+
     @Getter private static final Map<UUID, PostMatchInventory> postMatchInventories = new HashMap<>();
 
     private final UUID uuid = UUID.randomUUID();
@@ -67,7 +70,7 @@ public abstract class Match {
         this.kit = kit;
         this.teams = teams;
 
-        matches.put(uuid, this);
+        Phantom.getInstance().getMatchHandler().getMatches().put(uuid, this);
     }
 
     /**
@@ -80,21 +83,25 @@ public abstract class Match {
 
         //Check if the kit allows block building and breaking. If yes, we set the ArenaDetail to using to prevent player using the same arena
         if (kit.getGameRules().isBuild() || kit.getGameRules().isSpleef()) {
-            if (Match.getMatches().values().stream().filter(match -> match != this).anyMatch(match -> (match.getKit().getGameRules().isBuild() || match.getKit().getGameRules().isSpleef()) && match.getArenaDetail() == arenaDetail)) {
+            if (Phantom.getInstance().getMatchHandler().getMatches().values().stream().filter(match -> match != this).anyMatch(match -> (match.getKit().getGameRules().isBuild() || match.getKit().getGameRules().isSpleef()) && match.getArenaDetail() == arenaDetail)) {
                 end(true, "Another battle is using this field, and the battle's profession requires the use of blocks");
                 return;
             }
            // arenaDetail.setUsing(true);
         }
 
+        if(kit.getGameRules().isBuild()) {
+            arenaDetail.takeSnapshot();
+        }
+
 
 
         for (Player player : getMatchPlayers()) {
-            Profile profile = Profile.getByUuid(player.getUniqueId());
+            PlayerProfile profile = PlayerProfile.getByUuid(player.getUniqueId());
             profile.setMatch(this);
             profile.setState(ProfileState.FIGHTING);
 
-            PlayerUtils.resetInventory(player);
+            PlayerUtil.reset(player);
 
 
             player.addPotionEffects(kit.getEffects());
@@ -138,6 +145,10 @@ public abstract class Match {
         new MatchNewRoundTask(this, null, false);
     }
 
+    public void end() {
+        end(false, null);
+    }
+
     public void end(boolean forced, String reason) {
         if (state == MatchState.ENDING) {
             return;
@@ -157,8 +168,7 @@ public abstract class Match {
                 PostMatchInventory postMatchInventory = new PostMatchInventory(teamPlayer);
                 postMatchInventories.put(teamPlayer.getUuid(), postMatchInventory);
             }
-                displayMatchEndTitle();
-
+            displayMatchEndTitle();
             displayMatchEndMessages();
             calculateMatchStats();
         }
@@ -172,6 +182,55 @@ public abstract class Match {
         new MatchResetTask(this);
     }
 
+    /**
+     * @param profile A random profile from match players which is alive. This is used to create a score cooldown
+     * @param scorer The TeamPlayer who scored the point
+     */
+    public void score(PlayerProfile profile, TeamPlayer entity, TeamPlayer scorer) {
+        Team team = getTeam(scorer);
+        team.handlePoint();
+        if (state == MatchState.FIGHTING && team.getPoints() < kit.getGameRules().getMaximumPoints()) {
+            if (kit.getGameRules().isOnlyLoserResetPositionWhenGetPoint()) {
+                new MatchRespawnTask(this, entity);
+                return;
+            }
+          //  new MatchFireworkTask(team.getTeamColor().getDyeColor().getColor(), this);
+            new MatchNewRoundTask(this, scorer, true);
+            return;
+        }
+
+        getOpponentTeam(team).getAliveTeamPlayers().forEach(teamTarget -> die(teamTarget.getPlayer(), false));
+    }
+
+    public void die(Player deadPlayer, boolean disconnected) {
+        TeamPlayer teamPlayer = getTeamPlayer(deadPlayer);
+        PlayerProfile profile = PlayerProfile.get(deadPlayer);
+        Team team = getTeam(deadPlayer);
+
+        teamPlayer.setDisconnected(disconnected); //Set the disconnect state here, so player who already die, do /giveup, and do /spec to join back the match will not have duplicate messages
+
+        if (!teamPlayer.isAlive()) {
+            return;
+        }
+
+        teamPlayer.setAlive(false);
+        getMatchPlayers().forEach(VisibilityController::updateVisibility);
+
+        //Setup Post-Match Inventory
+        PostMatchInventory postMatchInventory = new PostMatchInventory(teamPlayer);
+        postMatchInventories.put(teamPlayer.getUuid(), postMatchInventory);
+
+       // displayDeathMessage(teamPlayer, deadPlayer);
+
+        //Check if there's only one team survives. If yes, end the match
+        if (canEnd()) {
+            end();
+        } else if (!disconnected) {
+            PlayerUtil.spectator(deadPlayer);
+           // Tasks.runLater(profile::setupItems, 1L);
+        }
+    }
+
     public void respawn(TeamPlayer teamPlayer) {
         Player player = teamPlayer.getPlayer();
         Team team = getTeam(player);
@@ -181,11 +240,11 @@ public abstract class Match {
         player.setAllowFlight(false);
         player.setFlying(false);
         teamPlayer.setRespawning(false);
-       // getMatchPlayers().forEach(VisibilityController::updateVisibility);
+        getMatchPlayers().forEach(VisibilityController::updateVisibility);
 
-       Profile profile = Profile.getByUuid(player.getUniqueId());
+       PlayerProfile profile = PlayerProfile.getByUuid(player.getUniqueId());
         //So arrow will not be duplicated if GiveBackArrow is on
-       // profile.getCooldowns().get(CooldownType.ARROW).cancelCountdown();
+        profile.getCooldowns().get(CooldownType.ARROW).cancelCountdown();
 
         player.setExp(0);
         player.setLevel(0);
@@ -196,14 +255,14 @@ public abstract class Match {
     }
 
     public void joinSpectate(Player player, Player target) {
-        Profile profile = Profile.getByUuid(player.getUniqueId());
+        PlayerProfile profile = PlayerProfile.getByUuid(player.getUniqueId());
 
         spectators.add(player.getUniqueId());
 
         getPlayersAndSpectators().forEach(other -> {
             //We do not want to send useless stuff to NPC. 'other' might be null because the NPC might be already destroyed because it is dead
             if (other != null) {
-                Profile otherProfile = Profile.getByUuid(other.getUniqueId());
+                PlayerProfile otherProfile = PlayerProfile.getByUuid(other.getUniqueId());
             }
         });
 
@@ -222,7 +281,7 @@ public abstract class Match {
         getPlayersAndSpectators().forEach(other -> {
             //We do not want to send useless stuff to NPC. 'other' might be null because the NPC might be already destroyed because it is dead
             if (other != null) {
-                Profile otherProfile = Profile.getByUuid(other.getUniqueId());
+                PlayerProfile otherProfile = PlayerProfile.getByUuid(other.getUniqueId());
             }
         });
 
@@ -247,7 +306,7 @@ public abstract class Match {
     public void setState(MatchState state) {
         this.state = state;
 
-    //    getPlayersAndSpectators().forEach(VisibilityController::updateVisibility);
+       getPlayersAndSpectators().forEach(VisibilityController::updateVisibility);
 
         MatchStateChangeEvent event = new MatchStateChangeEvent(this);
         Bukkit.getPluginManager().callEvent(event);
@@ -276,6 +335,8 @@ public abstract class Match {
         }
     }
 
+
+
     /**
      * @return A list of players who are in the match, without spectators and disconnected players
      */
@@ -292,7 +353,6 @@ public abstract class Match {
         return players;
 
     }
-
 
 
     public List<Player> getSpectators() {
@@ -338,6 +398,52 @@ public abstract class Match {
             }
         }
         return null;
+    }
+
+    public boolean isProtected(Location location, boolean isPlacing) {
+        return isProtected(location, isPlacing, null);
+    }
+
+    public boolean isProtected(Location location, boolean isPlacing, Block block) {
+        if (block != null && block.getType() == Material.TNT) { //Allow TNT placing above build limit
+            return false;
+        }
+        if (location.getBlockY() >= arenaDetail.getMaxbuild() || location.getBlockY() <= arenaDetail.getDeadzone()) {
+            return true;
+        }
+        if (!arenaDetail.getBounds().contains(location)) {
+            return true;
+        }
+        if (kit.getGameRules().isSpleef()) {
+            return location.getBlock().getType() != Material.SNOW_BLOCK && location.getBlock().getType() != Material.SAND;
+        }
+        if (kit.getGameRules().isBed()) {
+            switch (location.getBlock().getType()) {
+                case BED_BLOCK:
+                case WOOD:
+                case ENDER_STONE:
+                    return false;
+            }
+        }
+        if (kit.getGameRules().isBreakGoal() && location.getBlock().getType() == Material.BED_BLOCK) {
+            return false;
+        }
+        if (kit.getGameRules().isPortalGoal()) {
+            long count = Util.getBlocksAroundCenter(location, arenaDetail.getPortalProtecion()).stream().filter(b -> b.getType() == Material.ENDER_PORTAL).count();
+            if (count > 0) {
+                return true;
+            }
+            if (location.getBlock().getType() == Material.STAINED_CLAY && (location.getBlock().getData() == 0 || location.getBlock().getData() == 11 || location.getBlock().getData() == 14)) {
+                return false;
+            }
+        }
+        if (Config.MATCH_ALLOW_BREAK_BLOCKS.contains(location.getBlock().getType().name())) {
+            return false;
+        }
+        if (!isPlacing) {
+            return !getPlacedBlocks().contains(location);
+        }
+        return false;
     }
 
     public List<TeamPlayer> getTeamPlayers() {

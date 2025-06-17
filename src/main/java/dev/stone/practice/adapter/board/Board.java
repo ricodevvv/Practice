@@ -1,6 +1,8 @@
 package dev.stone.practice.adapter.board;
 
 
+import dev.stone.practice.Phantom;
+import dev.stone.practice.util.Common;
 import lombok.Setter;
 import dev.stone.practice.adapter.board.adapter.ScoreboardAdapter;
 import dev.stone.practice.adapter.board.fastboard.FastBoard;
@@ -17,17 +19,17 @@ import java.util.List;
  * Created: 26/05/2025
  * Project: Amber
  */
+
 @Setter
 public class Board {
 
     private Player player;
     private FastBoard fastBoard;
-    private ScoreboardAdapter adapter;
+    private ScoreboardAdapter adapter = new ScoreboardAdapter();
 
     public Board(Player player) {
         this.player = player;
         this.fastBoard = new FastBoard(player);
-        this.adapter = new ScoreboardAdapter();
     }
 
     public void update() {
@@ -43,8 +45,14 @@ public class Board {
         if (fastBoard.isDeleted()) {
             fastBoard = new FastBoard(player);
         }
+
         fastBoard.setTitle(CC.translate(adapter.getTitle(player)));
-        fastBoard.setLines(CC.translate(adapter.getScoreboard(player)));
+        if(adapter.getScoreboard(player) != null) {
+            fastBoard.setLines(CC.translate(adapter.getScoreboard(player)));
+        } else {
+            Common.debug("Lines is Null");
+
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 package dev.stone.practice.match.impl;
 
 import dev.stone.practice.arena.Arena;
+import dev.stone.practice.config.Lenguaje;
 import dev.stone.practice.kit.Kit;
 import dev.stone.practice.match.Match;
 import dev.stone.practice.match.MatchType;
@@ -41,7 +42,6 @@ public class SoloMatch extends Match {
 
         setQueueType(queueType);
         setDuel(duel);
-
     }
 
     @Override
@@ -57,7 +57,10 @@ public class SoloMatch extends Match {
 
     @Override
     public void displayMatchEndTitle() {
-
+        TeamPlayer tWinner = getWinningPlayers().get(0);
+        TeamPlayer tLoser = getOpponent(getWinningPlayers().get(0));
+        tWinner.broadcastTitle(Lenguaje.MATCH_MESSAGES.WINNER_END_TITLE.replace("<winner>", tWinner.getUsername()), Lenguaje.MATCH_MESSAGES.WINNER_END_SUBTITLE.replace("<winner>", tWinner.getUsername()));
+        tLoser.broadcastTitle(Lenguaje.MATCH_MESSAGES.LOSER_END_TITLE, Lenguaje.MATCH_MESSAGES.LOSER_END_SUBTITLE.replace("<winner>", tWinner.getUsername()));
     }
 
     @Override

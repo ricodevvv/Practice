@@ -5,6 +5,18 @@ import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import dev.stone.practice.config.Scoreboard;
+import dev.stone.practice.match.MatchHandler;
+import dev.stone.practice.match.listener.blocks.BlockFromTo;
+import dev.stone.practice.match.listener.blocks.BlockBreak;
+import dev.stone.practice.match.listener.blocks.BlockPlace;
+import dev.stone.practice.match.listener.blocks.BucketEmpty;
+import dev.stone.practice.match.listener.custom.MatchStartListener;
+import dev.stone.practice.match.listener.player.DamageListener;
+import dev.stone.practice.match.listener.player.PlayerDeathEvent;
+import dev.stone.practice.match.listener.player.PlayerMove;
+import dev.stone.practice.match.listener.player.PlayerQuitEvent;
+import dev.stone.practice.match.listener.potion.PotionListener;
 import dev.stone.practice.util.serialization.*;
 import lombok.Getter;
 import dev.stone.practice.adapter.board.NameThreadFactory;
@@ -20,18 +32,17 @@ import dev.stone.practice.commands.impl.misc.SetLobbyCommand;
 import dev.stone.practice.commands.impl.profile.ProfileBuildCommand;
 import dev.stone.practice.config.Config;
 import dev.stone.practice.config.Lenguaje;
-import dev.stone.practice.config.ScoreboardConfig;
 import dev.stone.practice.kit.KitHandler;
 import dev.stone.practice.lobby.LobbyListener;
 import dev.stone.practice.lobby.LobbyManager;
-import dev.stone.practice.profile.Profile;
+import dev.stone.practice.profile.PlayerProfile;
 import dev.stone.practice.profile.listeners.ProfileListener;
 import dev.stone.practice.util.CC;
 import dev.stone.practice.util.ChunkSnapshotAdapter;
 import dev.stone.practice.util.config.impl.BasicConfigurationFile;
 import dev.stone.practice.util.menu.MenuListener;
 import dev.stone.practice.util.procedure.ProcedureListener;
-import net.frozenorb.potpvp.util.serialization.*;
+
 import dev.stone.practice.util.uuid.UUIDCache;
 import net.j4c0b3y.api.config.ConfigHandler;
 import org.bukkit.Bukkit;
@@ -91,6 +102,7 @@ public final class Phantom extends JavaPlugin {
     public Config language;
     public KitHandler kitHandler;
     public LobbyManager lobbyManager;
+    public MatchHandler matchHandler;
 
     private final ChatColor dominantColor = ChatColor.GOLD;
 
@@ -111,6 +123,16 @@ public final class Phantom extends JavaPlugin {
         this.setupMongo();
 
         this.uuidCache = new UUIDCache();
+        this.configHandler = new ConfigHandler();
+
+        configHandler.setKeyFormatter(key -> key.replace("_", "-"));
+
+        this.language = new Config("lenguage", configHandler);
+        Lenguaje lang = new Lenguaje("lang", configHandler);
+        Scoreboard scoreboard = new Scoreboard("scoreboard", configHandler);
+        scoreboard.load();
+        lang.load();
+        language.load();
 
         this.commandHandler = new CommandHandler(this);
         this.commandHandler.bind(ChatColor.class).toProvider(new ChatColorProvider());
@@ -121,25 +143,10 @@ public final class Phantom extends JavaPlugin {
 
         this.registerCommands();
         this.registerPermission();
+        this.loadListeners();
+        this.logger("Registering listeners...");
 
-        Profile.init();
-
-        this.configHandler = new ConfigHandler();
-
-        configHandler.setKeyFormatter(key -> key.replace("_", "-"));
-
-        this.language = new Config("lenguage", configHandler);
-        ScoreboardConfig scoreboardConfig = new ScoreboardConfig("scoreboard", configHandler);
-        Lenguaje lang = new Lenguaje("lang", configHandler);
-        lang.load();
-        scoreboardConfig.load();
-        language.load();
-        
-
-        if (this.getServer().getPluginManager().isPluginEnabled("HolographicDisplays")) {
-            this.logger("&7Found &cHolographicDisplays&7, Hooking holograms....");
-            hologramsConfig = new BasicConfigurationFile(this, "holograms");
-        }
+        PlayerProfile.init();
 
         this.lobbyManager = new LobbyManager(this);
 
@@ -155,13 +162,10 @@ public final class Phantom extends JavaPlugin {
 
 
         arenaHandler = new ArenaHandler();
-
-        loadListeners();
-        this.logger("Registering listeners...");
-
+        this.matchHandler = new MatchHandler("Starting MatchHandler");
 
         this.consoleLog("");
-        this.consoleLog("&7Initialized &cPotPvP &7Successfully!");
+        this.consoleLog("&7Initialized &cPhantom &7Successfully!");
         this.consoleLog("&c------------------------------------------------");
     }
 
@@ -188,7 +192,17 @@ public final class Phantom extends JavaPlugin {
                 new ProcedureListener(),
                 new ScoreboardListener(),
                 new ProfileListener(),
-                new LobbyListener()
+                new LobbyListener(),
+                new MatchStartListener(),
+                new PlayerDeathEvent(),
+                new PlayerQuitEvent(),
+                new DamageListener(),
+                new BlockFromTo(),
+                new BucketEmpty(),
+                new PotionListener(),
+                new BlockBreak(),
+                new BlockPlace(),
+                new PlayerMove()
         ).forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
     }
 

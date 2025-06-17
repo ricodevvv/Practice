@@ -26,7 +26,7 @@ import xyz.refinedev.command.annotation.Sender;
  */
 public class MatchDebugCommand implements PotPvPCommand {
 
-    @Command(name = "matchdebug", desc = "Developer debug command for match test")
+    @Command(name = "", desc = "Developer debug command for match test")
     @Require("phantom.debug.command")
 public void DebugCommandExecute(@Sender Player player, Player target) {
 

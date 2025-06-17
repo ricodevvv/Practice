@@ -1,6 +1,7 @@
 package dev.stone.practice.util;
 
-import dev.stone.practice.profile.Profile;
+import dev.stone.practice.match.MatchState;
+import dev.stone.practice.profile.PlayerProfile;
 import dev.stone.practice.profile.ProfileState;
 import org.bukkit.entity.Player;
 
@@ -14,13 +15,12 @@ import org.bukkit.entity.Player;
  */
 public class Checker {
 
-
     public static boolean canDamage(Player player) {
-       Profile profile = Profile.getByUuid(player.getUniqueId());
+        PlayerProfile profile = PlayerProfile.get(player);
         return profile.getState() == ProfileState.FIGHTING
-                && profile.getMatch() != null;
-              /*  && profile.getMatch().getTeamPlayer(player).isAlive()
+                && profile.getMatch() != null
+                && profile.getMatch().getTeamPlayer(player).isAlive()
                 && !profile.getMatch().getTeamPlayer(player).isRespawning()
-                && profile.getMatch().getState() == MatchState.FIGHTING; */
+                && profile.getMatch().getState() == MatchState.FIGHTING;
     }
 }

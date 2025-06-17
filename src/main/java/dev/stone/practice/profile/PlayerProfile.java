@@ -7,6 +7,10 @@ import com.google.gson.JsonParser;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.ReplaceOptions;
+import com.sun.media.jfxmedia.events.PlayerStateEvent;
+import dev.stone.practice.profile.cooldown.Cooldown;
+import dev.stone.practice.profile.cooldown.CooldownType;
+import dev.stone.practice.util.VisibilityController;
 import lombok.Getter;
 import lombok.Setter;
 import dev.stone.practice.Phantom;
@@ -23,6 +27,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This Project is property of Desroyed Development © 2025
@@ -33,10 +38,10 @@ import java.util.*;
  * Project: Phantom
  */
 @Getter @Setter
-public class Profile {
+public class PlayerProfile {
 
 
-   @Getter private static Map<UUID, Profile> profiles = new HashMap<>();
+   @Getter private static Map<UUID, PlayerProfile> profiles = new HashMap<>();
 
     public static MongoCollection<Document> collection;
 
@@ -48,6 +53,12 @@ public class Profile {
     private ProfileState state;
     private Match match;
     private final Map<Kit, ProfileKitData> kitData;
+
+
+    /**
+     * this stores a player's cooldown data
+     */
+    private final Map<CooldownType, Cooldown> cooldowns = new ConcurrentHashMap<>();
 
     /**
      * This stores a player's build mode.
@@ -90,7 +101,7 @@ public class Profile {
     @Getter @Setter private String rankedBanID;
 
 
-    public Profile(UUID uuid) {
+    public PlayerProfile(UUID uuid) {
         this.uuid = uuid;
         this.build = false;
         this.state = ProfileState.LOBBY;
@@ -104,14 +115,16 @@ public class Profile {
         this.experience = 0;
         this.level = 0;
 
-
         for (Kit kit : KitHandler.getKits()) {
             kitData.put(kit, new ProfileKitData());
         }
-
+        //Setup all default cooldown
+        for (CooldownType type : CooldownType.values()) {
+            cooldowns.put(type, new Cooldown(0));
+        }
     }
 
-    public Profile(Player player) {
+    public PlayerProfile(Player player) {
         this.build = false;
         this.uuid = uuid;
         this.state = ProfileState.LOBBY;
@@ -130,7 +143,6 @@ public class Profile {
     public Player getPlayer() {
         return Bukkit.getPlayer(uuid);
     }
-
 
     public boolean isInMatch() {
         return match != null;
@@ -163,8 +175,6 @@ public class Profile {
         this.setLevel(((Integer) playerStatus.get("level")).intValue());
         this.setExperience(((Integer) playerStatus.get("experience")).intValue());
         List<String> permissionsList = (List<String>) playerStatus.get("permissions");
-
-
 
         Document kitStatistics = (Document) document.get("kitStatistics");
 
@@ -223,7 +233,6 @@ public class Profile {
         statusDocument.put("experience", experience);
         document.put("status", statusDocument);
 
-
         Document kitStatisticsDocument = new Document();
 
         for (Map.Entry<Kit, ProfileKitData> entry : kitData.entrySet()) {
@@ -269,7 +278,7 @@ public class Profile {
         collection = Phantom.getInstance().getMongoDatabase().getCollection("profiles");
         // Players might have joined before the plugin finished loading
         for (Player player : Bukkit.getOnlinePlayers()) {
-            Profile profile = new Profile(player.getUniqueId());
+            PlayerProfile profile = new PlayerProfile(player.getUniqueId());
 
             try {
                 profile.load();
@@ -283,8 +292,21 @@ public class Profile {
     }
 
 
-    public static Profile getByUuid(UUID uuid) {
-        Profile profile = profiles.get(uuid);
+    /**
+     * set the status of a player
+     * @param playerState the state to be set
+     */
+    public void setPlayerState(ProfileState playerState) {
+        this.state = playerState;
+        //getPlayer might be null because PlayerProfile.setPlayerState might be trigger when player disconnects
+        if (getPlayer() != null) {
+            VisibilityController.updateVisibility(getPlayer());
+        }
+    }
+
+
+    public static PlayerProfile getByUuid(UUID uuid) {
+        PlayerProfile profile = profiles.get(uuid);
 
         if (profile == null) {
             Common.debug(CC.RED + "Unable to find perfil for uuid: " + uuid);
@@ -292,5 +314,8 @@ public class Profile {
         }
 
         return profile;
+    }
+    public static PlayerProfile get(Player player) {
+      return getByUuid(player.getUniqueId());
     }
 }
