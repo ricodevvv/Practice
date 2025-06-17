@@ -21,21 +21,31 @@ public class Config extends StaticConfig {
         super(new File(Phantom.getInstance().getDataFolder(), filename + ".yml"), handler);
     }
 
+    @Comment("For developers only, do not touch")
+    public static boolean DEBUG = false;
+
+    @Comment("the location where all players will be teleported after finishing a match or entering the server")
+    public static String LOBBY_LOCATION = "null";
+
+    @Comment("This message will be sent when a player enters the server.")
     public static List<String> WELCOME_MESSAGE = Arrays.asList(
             "Welcome to server",
             "Use /help for recive help"
     );
 
+    @Comment("For developers only, do not touch")
     public static boolean LOBBY_DISPLAY_PLAYERS = true;
 
+    @Comment("the initial elo with which everyone will start")
     public static int DEFAULT_GLOBAL_ELO = 1000;
 
-    public static boolean DEBUG = false;
 
     public static class MATCH_SETTINGS {
+        @Comment("the time in seconds it will take to teleport a player to the lobby after finishing a match")
         public static int END_DURATION = 100;
     }
 
+    @Comment("list of blocks that are allowed to break in a match")
     public static List<String > MATCH_ALLOW_BREAK_BLOCKS = Arrays.asList(
             "DEAD_BUSH",
             "GRASS",
@@ -43,20 +53,15 @@ public class Config extends StaticConfig {
             "CACTUS"
     );
 
-    public static String LOBBY_LOCATION = "null";
-
-    public static class KIT_MENU {
-        public static String MANAGEMENT_MENU_TITLE = "&bManagement menu";
-        public static String KIT_MANAGE_BUTTON = "&bClick for manage <kit>";
-        public static int KIT_DETAILS_MENU_SIZE = 36;
-    }
-
+    @Comment("Configuration for tnt")
     public static class EXPLOSIVE_CONFIG {
        public static class TNT_CONFIG {
+           @Comment("Vertical impulse that a player will receive from the tnt")
            public static double VERTICAL = 2.0;
+           @Comment("Yield value for the TNT")
            public static double YIELD = 4.0;
+           @Comment("Fuse ticks value for the TNT")
            public static int FUSE_TICKS = 50;
-
        }
 
     }

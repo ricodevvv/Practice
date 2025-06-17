@@ -1,5 +1,6 @@
 package dev.stone.practice.kit.menu;
 
+import dev.stone.practice.config.Lenguaje;
 import lombok.RequiredArgsConstructor;
 import dev.stone.practice.config.Config;
 import dev.stone.practice.kit.Kit;
@@ -31,7 +32,7 @@ public class KitDetailsMenu extends PaginatedMenu {
 
     @Override
     public String getPrePaginatedTitle(Player player) {
-        return Config.KIT_MENU.MANAGEMENT_MENU_TITLE;
+        return Lenguaje.KIT_MENU.MANAGEMENT_MENU_TITLE;
     }
 
     @Override
@@ -54,6 +55,6 @@ public class KitDetailsMenu extends PaginatedMenu {
 
     @Override
     public int getSize() {
-        return Config.KIT_MENU.KIT_DETAILS_MENU_SIZE;
+        return Lenguaje.KIT_MENU.KIT_DETAILS_MENU_SIZE;
     }
 }

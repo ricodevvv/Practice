@@ -1,6 +1,7 @@
 package dev.stone.practice.kit.menu;
 
 import dev.stone.practice.config.Config;
+import dev.stone.practice.config.Lenguaje;
 import dev.stone.practice.kit.KitHandler;
 import dev.stone.practice.util.ItemBuilder;
 import dev.stone.practice.util.menu.Button;
@@ -23,7 +24,7 @@ import java.util.Map;
 public class KitsManagementMenu extends PaginatedMenu {
     @Override
     public String getPrePaginatedTitle(Player player) {
-        return Config.KIT_MENU.MANAGEMENT_MENU_TITLE;
+        return Lenguaje.KIT_MENU.MANAGEMENT_MENU_TITLE;
     }
 
     @Override
@@ -34,7 +35,7 @@ public class KitsManagementMenu extends PaginatedMenu {
             @Override
             public ItemStack getButtonItem(Player player) {
                 return new ItemBuilder(kit.getDisplayIcon().clone())
-                        .name(Config.KIT_MENU.KIT_MANAGE_BUTTON.replace("<kit>", kit.getDisplayName()))
+                        .name(Lenguaje.KIT_MENU.KIT_MANAGE_BUTTON.replace("<kit>", kit.getDisplayName()))
                         .build();
             }
 

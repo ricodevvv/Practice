@@ -32,6 +32,12 @@ public class Lenguaje extends StaticConfig {
         public static String GRAY_IDENTIFIER = "Gray";
     }
 
+    public static class KIT_MENU {
+        public static String MANAGEMENT_MENU_TITLE = "&bManagement menu";
+        public static String KIT_MANAGE_BUTTON = "&bClick for manage <kit>";
+        public static int KIT_DETAILS_MENU_SIZE = 36;
+    }
+
     public static class MATCH_MESSAGES {
         public static String RESPAWN_IN_MESSAGE = "<theme>Respawn in <seconds>";
         public static String CANNOT_BREAK_OWN_BED = "&cYou cannot break your own bed!";

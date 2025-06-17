@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import dev.stone.practice.config.DatabaseConfig;
 import dev.stone.practice.config.Scoreboard;
 import dev.stone.practice.match.MatchHandler;
 import dev.stone.practice.match.listener.blocks.BlockFromTo;
@@ -103,6 +104,7 @@ public final class Phantom extends JavaPlugin {
     public KitHandler kitHandler;
     public LobbyManager lobbyManager;
     public MatchHandler matchHandler;
+    public DatabaseConfig databaseConfig;
 
     private final ChatColor dominantColor = ChatColor.GOLD;
 
@@ -114,19 +116,18 @@ public final class Phantom extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
-        saveDefaultConfig();
     }
 
     @Override
     public void onEnable() {
         this.consoleLog("&c------------------------------------------------");
+        this.configHandler = new ConfigHandler();
+        configHandler.setKeyFormatter(key -> key.replace("_", "-"));
+        databaseConfig = new DatabaseConfig("database", configHandler);
+        databaseConfig.load();
         this.setupMongo();
 
         this.uuidCache = new UUIDCache();
-        this.configHandler = new ConfigHandler();
-
-        configHandler.setKeyFormatter(key -> key.replace("_", "-"));
-
         this.language = new Config("lenguage", configHandler);
         Lenguaje lang = new Lenguaje("lang", configHandler);
         Scoreboard scoreboard = new Scoreboard("scoreboard", configHandler);
@@ -207,29 +208,28 @@ public final class Phantom extends JavaPlugin {
     }
 
     private void setupMongo() {
-        if (this.getConfig().getBoolean("MONGO.URI-MODE")) {
-            this.mongoClient = MongoClients.create(this.getConfig().getString("MONGO.URI.CONNECTION_STRING"));
-            this.mongoDatabase = mongoClient.getDatabase(this.getConfig().getString("MONGO.URI.DATABASE"));
+        if (DatabaseConfig.URI_MODE) {
+            this.mongoClient = MongoClients.create(DatabaseConfig.URI.CONNECTION_STRING);
+            this.mongoDatabase = mongoClient.getDatabase(DatabaseConfig.URI.DATABASE);
 
             this.logger("Initialized MongoDB successfully!");
             return;
         }
 
-        boolean auth = this.getConfig().getBoolean("MONGO.NORMAL.AUTHENTICATION.ENABLED");
-        String host = this.getConfig().getString("MONGO.NORMAL.HOST");
-        int port = this.getConfig().getInt("MONGO.NORMAL.PORT");
+        boolean auth = DatabaseConfig.NORMAL.AUTHENTICATION.ENABLED;
+        String host = DatabaseConfig.NORMAL.HOST;
+        int port = DatabaseConfig.NORMAL.PORT;
 
         String uri = "mongodb://" + host + ":" + port;
 
         if (auth) {
-            String username = this.getConfig().getString("MONGO.NORMAL.AUTHENTICATION.USERNAME");
-            String password = this.getConfig().getString("MONGO.NORMAL.AUTHENTICATION.PASSWORD");
+            String username = DatabaseConfig.NORMAL.AUTHENTICATION.USERNAME;
+            String password = DatabaseConfig.NORMAL.AUTHENTICATION.PASSWORD;
             uri = "mongodb://" + username + ":" + password + "@" + host + ":" + port;
         }
 
-
         this.mongoClient = MongoClients.create(uri);
-        this.mongoDatabase = mongoClient.getDatabase(this.getConfig().getString("MONGO.URI.DATABASE"));
+        this.mongoDatabase = mongoClient.getDatabase(DatabaseConfig.URI.DATABASE);
 
         this.logger("Initialized MongoDB successfully!");
     }
