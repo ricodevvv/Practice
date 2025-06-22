@@ -33,6 +33,9 @@ public class Config extends StaticConfig {
             "Use /help for recive help"
     );
 
+    @Comment("The default theme for new users")
+    public static String DEFAULT_THEME = "AQUA"
+;
     public static int RANKED_WINS_REQUIRED = 10;
 
     @Comment("For developers only, do not touch")

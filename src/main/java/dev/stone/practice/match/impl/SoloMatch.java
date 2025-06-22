@@ -1,19 +1,24 @@
 package dev.stone.practice.match.impl;
 
+import dev.stone.practice.Phantom;
 import dev.stone.practice.arena.Arena;
 import dev.stone.practice.config.Lenguaje;
+import dev.stone.practice.config.Scoreboard;
 import dev.stone.practice.kit.Kit;
 import dev.stone.practice.match.Match;
+import dev.stone.practice.match.MatchState;
 import dev.stone.practice.match.MatchType;
 import dev.stone.practice.match.team.Team;
 import dev.stone.practice.match.team.TeamPlayer;
 import dev.stone.practice.queue.QueueType;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This Project is property of Desroyed Development © 2025
@@ -28,8 +33,9 @@ public class SoloMatch extends Match {
     private final Team teamA;
     private final Team teamB;
 
-    private final TeamPlayer playerA;
-    private final TeamPlayer playerB;
+    @Getter private final TeamPlayer playerA;
+    @Getter
+   private final TeamPlayer playerB;
 
     public SoloMatch(Arena arenaDetail, Kit kit, Team teamA, Team teamB, QueueType queueType, boolean duel) {
         super(arenaDetail, kit, Arrays.asList(teamA, teamB));
@@ -95,6 +101,35 @@ public class SoloMatch extends Match {
     @Override
     public List<String> getMatchScoreboard(Player player) {
         List<String> elements = new ArrayList<>();
+
+        if (getState() == MatchState.ENDING) {
+            List<String> translated = Scoreboard.MATCH_SCOREBOARD.ENDING_SCOREBOARD.stream()
+                    .map(key -> Phantom.getInstance().placeholders.translate(player, key))
+                    .collect(Collectors.toList());
+            elements.addAll(translated);
+        } else {
+            if (getKit().getGameRules().isBoxing()) {
+                List<String> translated = Scoreboard.MATCH_SCOREBOARD.BOXING_SCOREBOARD.stream()
+                        .map(key -> Phantom.getInstance().placeholders.translate(player, key))
+                        .collect(Collectors.toList());
+                elements.addAll(translated);
+            } else if (getKit().getGameRules().isBed()) {
+                List<String> translated = Scoreboard.MATCH_SCOREBOARD.BED_SCOREBOARD.stream()
+                        .map(key -> Phantom.getInstance().placeholders.translate(player, key))
+                        .collect(Collectors.toList());
+                elements.addAll(translated);
+            } else if (getKit().getGameRules().isPoint(this)) {
+                List<String> translated = Scoreboard.MATCH_SCOREBOARD.POINT_SCOREBOARD.stream()
+                        .map(key -> Phantom.getInstance().placeholders.translate(player, key))
+                        .collect(Collectors.toList());
+                elements.addAll(translated);
+            } else {
+                List<String> translated = Scoreboard.MATCH_SCOREBOARD.IN_MATCH_SOLO_SCOREBOARD.stream()
+                        .map(key -> Phantom.getInstance().placeholders.translate(player, key))
+                        .collect(Collectors.toList());
+                elements.addAll(translated);
+            }
+        }
         return elements;
     }
 

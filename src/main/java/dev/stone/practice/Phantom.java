@@ -5,9 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
-import dev.stone.practice.adapter.board.NameThreadFactory;
-import dev.stone.practice.adapter.board.listener.ScoreboardListener;
-import dev.stone.practice.adapter.board.task.BoardTask;
+import dev.stone.practice.adapter.scoreboard.ScoreboardAdapter;
 import dev.stone.practice.arena.ArenaHandler;
 import dev.stone.practice.commands.binds.ChatColorProvider;
 import dev.stone.practice.commands.binds.UUIDDrinkProvider;
@@ -18,7 +16,6 @@ import dev.stone.practice.commands.impl.misc.SetLobbyCommand;
 import dev.stone.practice.commands.impl.profile.ProfileBuildCommand;
 import dev.stone.practice.commands.impl.queue.QueueCommands;
 import dev.stone.practice.config.Config;
-import dev.stone.practice.config.DatabaseConfig;
 import dev.stone.practice.config.Lenguaje;
 import dev.stone.practice.config.Scoreboard;
 import dev.stone.practice.kit.KitHandler;
@@ -36,20 +33,25 @@ import dev.stone.practice.match.listener.player.PlayerMove;
 import dev.stone.practice.match.listener.player.PlayerQuitEvent;
 import dev.stone.practice.match.listener.potion.PotionListener;
 import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.division.DivisionsManager;
 import dev.stone.practice.profile.listeners.ProfileListener;
 import dev.stone.practice.queue.Queue;
 import dev.stone.practice.util.CC;
 import dev.stone.practice.util.ChunkSnapshotAdapter;
+import dev.stone.practice.util.NameThreadFactory;
 import dev.stone.practice.util.config.impl.BasicConfigurationFile;
 import dev.stone.practice.util.menu.MenuListener;
 import dev.stone.practice.util.procedure.ProcedureListener;
 import dev.stone.practice.util.serialization.*;
+import io.github.epicgo.sconey.SconeyHandler;
 import lombok.Getter;
 import net.j4c0b3y.api.config.ConfigHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -60,12 +62,12 @@ import org.bukkit.util.BlockVector;
 import org.bukkit.util.Vector;
 import xyz.refinedev.command.CommandHandler;
 import xyz.refinedev.spigot.api.chunk.ChunkSnapshot;
-
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 
 @Getter
 public final class Phantom extends JavaPlugin {
@@ -103,18 +105,21 @@ public final class Phantom extends JavaPlugin {
     public KitHandler kitHandler;
     public LobbyManager lobbyManager;
     public MatchHandler matchHandler;
-    public DatabaseConfig databaseConfig;
     public BasicConfigurationFile hotbar;
     private final ChatColor dominantColor = ChatColor.GOLD;
+    public BasicConfigurationFile databaseConfig, scoreboardConfig, divisionsConfig;
+    public Cache cache;
+    public Placeholders placeholders;
+    private SconeyHandler scoreboardHandler;
+    private DivisionsManager divisionsManager;
 
-    private ScheduledExecutorService executor;
-
-
-    private BasicConfigurationFile hologramsConfig;
 
     @Override
     public void onLoad() {
         instance = this;
+        saveDefaultConfig();
+        this.databaseConfig = new BasicConfigurationFile(this, "database");
+        this.setupMongo();
     }
 
     @Override
@@ -123,16 +128,15 @@ public final class Phantom extends JavaPlugin {
         this.configHandler = new ConfigHandler();
         configHandler.setKeyFormatter(key -> key.replace("_", "-"));
         configHandler.setKeyFormatter(CC::translate);
-        databaseConfig = new DatabaseConfig("database", configHandler);
-        databaseConfig.load();
-        this.setupMongo();
 
         this.language = new Config("config", configHandler);
         Lenguaje lang = new Lenguaje("lang", configHandler);
-        Scoreboard scoreboard = new Scoreboard("scoreboard", configHandler);
+        Scoreboard scoreboard = new Scoreboard("test-score", configHandler);
         scoreboard.load();
         lang.load();
         language.load();
+        this.divisionsConfig = new BasicConfigurationFile(this, "divisions");
+        this.scoreboardConfig = new BasicConfigurationFile(this, "scoreboard");
         this.hotbar = new BasicConfigurationFile(this, "hotbar");
 
         this.commandHandler = new CommandHandler(this);
@@ -141,6 +145,8 @@ public final class Phantom extends JavaPlugin {
 
         this.kitHandler = new KitHandler();
         this.kitHandler.Onload();
+        this.cache = new Cache();
+        this.placeholders = new Placeholders(this);
 
         this.registerCommands();
         this.registerPermission();
@@ -149,6 +155,8 @@ public final class Phantom extends JavaPlugin {
 
         PlayerProfile.init();
         Queue.init();
+        this.divisionsManager = new DivisionsManager(this);
+        this.divisionsManager.init();
 
         this.lobbyManager = new LobbyManager(this);
 
@@ -156,16 +164,18 @@ public final class Phantom extends JavaPlugin {
             world.setGameRuleValue("doDaylightCycle", "false");
             world.setGameRuleValue("doMobSpawning", "false");
             world.setTime(6_000L);
+
+            world.getEntities().stream().filter(entity -> entity.getType() != EntityType.PLAYER && entity.getType() != EntityType.ITEM_FRAME).forEach(Entity::remove);
+            world.setStorm(false);
+            world.setThundering(false);
+            world.setTime(0L);
         }
-
-        // Scoreboard load
-        this.executor = Executors.newScheduledThreadPool(1, new NameThreadFactory("Amber - BoardThread"));
-        this.executor.scheduleAtFixedRate(new BoardTask(), 0L, 100L, TimeUnit.MILLISECONDS);
-
 
         arenaHandler = new ArenaHandler();
         this.matchHandler = new MatchHandler("Starting MatchHandler");
 
+        // Scoreboard load
+        this.scoreboardHandler = new SconeyHandler(this, new ScoreboardAdapter());
         this.consoleLog("");
         this.consoleLog("&7Initialized &cPhantom &7Successfully!");
         this.consoleLog("&c------------------------------------------------");
@@ -193,7 +203,6 @@ public final class Phantom extends JavaPlugin {
         Arrays.asList(
                 new MenuListener(this),
                 new ProcedureListener(),
-                new ScoreboardListener(),
                 new ProfileListener(),
                 new LobbyListener(),
                 new MatchStartListener(),
@@ -210,30 +219,27 @@ public final class Phantom extends JavaPlugin {
     }
 
     private void setupMongo() {
-        if (DatabaseConfig.URI_MODE) {
-            this.mongoClient = MongoClients.create(DatabaseConfig.URI.CONNECTION_STRING);
-            this.mongoDatabase = mongoClient.getDatabase(DatabaseConfig.URI.DATABASE);
-
-            this.logger("Initialized MongoDB successfully!");
+        if (this.databaseConfig.getBoolean("MONGO.URI-MODE")) {
+            this.mongoClient = MongoClients.create(this.databaseConfig.getString("MONGO.URI.CONNECTION_STRING"));
+            this.mongoDatabase = mongoClient.getDatabase(this.databaseConfig.getString("MONGO.URI.DATABASE"));
             return;
         }
 
-        boolean auth = DatabaseConfig.NORMAL.AUTHENTICATION.ENABLED;
-        String host = DatabaseConfig.NORMAL.HOST;
-        int port = DatabaseConfig.NORMAL.PORT;
+        boolean auth = this.databaseConfig.getBoolean("MONGO.NORMAL.AUTHENTICATION.ENABLED");
+        String host = this.databaseConfig.getString("MONGO.NORMAL.HOST");
+        int port = this.databaseConfig.getInteger("MONGO.NORMAL.PORT");
 
         String uri = "mongodb://" + host + ":" + port;
 
         if (auth) {
-            String username = DatabaseConfig.NORMAL.AUTHENTICATION.USERNAME;
-            String password = DatabaseConfig.NORMAL.AUTHENTICATION.PASSWORD;
+            String username = this.databaseConfig.getString("MONGO.NORMAL.AUTHENTICATION.USERNAME");
+            String password = this.databaseConfig.getString("MONGO.NORMAL.AUTHENTICATION.PASSWORD");
             uri = "mongodb://" + username + ":" + password + "@" + host + ":" + port;
         }
 
-        this.mongoClient = MongoClients.create(uri);
-        this.mongoDatabase = mongoClient.getDatabase(DatabaseConfig.URI.DATABASE);
 
-        this.logger("Initialized MongoDB successfully!");
+        this.mongoClient = MongoClients.create(uri);
+        this.mongoDatabase = mongoClient.getDatabase(this.databaseConfig.getString("MONGO.URI.DATABASE"));
     }
 
 

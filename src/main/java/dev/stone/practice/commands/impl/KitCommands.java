@@ -42,13 +42,15 @@ public class KitCommands implements PotPvPCommand {
         new KitsManagementMenu().openMenu(player);
     }
 
-    @Command(name = "debugdev", desc = "SetKit", usage = "/kit debugdeb")
+    @Command(name = "debugdev", desc = "Set", usage = "/kit debugdev <kitname>")
     @Require("phantom.admin.kit")
     public void DebugCommandExecute(@Sender Player player, String kitName) {
        Kit kit = KitHandler.getByName(kitName);
        if(kit == null) return;
        kit.getKitLoadout().setContents(player.getInventory().getContents());
-       player.sendMessage(CC.GREEN + "Ready Vro");
+       kit.getKitLoadout().setArmor(player.getInventory().getArmorContents());
+       Phantom.getInstance().getKitHandler().saveKits();
+      player.sendMessage(CC.GREEN + "Kit contents set");
     }
 
 

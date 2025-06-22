@@ -5,8 +5,8 @@ package dev.stone.practice.adapter;
  * Redistribution of this Project is not allowed
  *
  * @author ricadev
- * Created: 10/06/2025
- * Project: Phantom
+ * Created: 22/06/2025
+ * Project: Practice
  */
-public class AdapterManager {
+public class Test {
 }

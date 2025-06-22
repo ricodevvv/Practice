@@ -1,4 +1,4 @@
-package dev.stone.practice.adapter.board;
+package dev.stone.practice.util;
 
 import org.jetbrains.annotations.NotNull;
 

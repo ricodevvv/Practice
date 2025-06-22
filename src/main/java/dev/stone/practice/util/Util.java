@@ -8,9 +8,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftLivingEntity;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftTNTPrimed;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import java.lang.reflect.Field;
@@ -64,6 +67,27 @@ public class Util {
 
         return blocks;
     }
+
+    public static void sendArrowHitMessage(EntityDamageByEntityEvent event) {
+        Player entity = (Player) event.getEntity();
+        Player damager = event.getDamager() instanceof Arrow ? (Player) ((Arrow) event.getDamager()).getShooter() : (Player) event.getDamager();
+
+        double damage = event.getFinalDamage();
+        double absorptionHealth = ((CraftPlayer) entity).getHandle().getAbsorptionHearts();
+        final double absorptionDamage = Math.ceil(absorptionHealth - damage) / 2.0;
+        if (absorptionDamage > 0.0D) {
+            absorptionHealth = absorptionDamage;
+            damage = 0.0;
+        } else {
+            damage -= absorptionHealth;
+            absorptionHealth = 0.0;
+        }
+        final double health = Math.ceil(entity.getHealth() - damage) / 2.0D;
+        if (health > 0) {
+          //  Language.MATCH_ARROW_DAMAGE.sendMessage(damager, entity.getName(), Eden.DECIMAL.format(health), Eden.DECIMAL.format(absorptionHealth));
+        }
+    }
+
 
     /**
      * scans an area in search of a bed is used for kits like BedFight

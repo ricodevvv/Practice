@@ -11,6 +11,9 @@ import dev.stone.practice.hotbar.Hotbar;
 import dev.stone.practice.party.Party;
 import dev.stone.practice.profile.cooldown.Cooldown;
 import dev.stone.practice.profile.cooldown.CooldownType;
+import dev.stone.practice.profile.division.ProfileDivision;
+import dev.stone.practice.profile.settings.ProfileOptions;
+import dev.stone.practice.profile.themes.Themes;
 import dev.stone.practice.util.VisibilityController;
 import lombok.Getter;
 import lombok.Setter;
@@ -55,6 +58,7 @@ public class PlayerProfile {
     private Match match;
     private final Map<Kit, ProfileKitData> kitData;
     private Party party;
+    private final ProfileOptions options;
 
 
     /**
@@ -107,6 +111,7 @@ public class PlayerProfile {
         this.uuid = uuid;
         this.build = false;
         this.state = ProfileState.LOBBY;
+        this.options = new ProfileOptions();
         this.kitData = new HashMap<>();
         this.followers = new ArrayList<>();
         this.rankedBan = false;
@@ -130,6 +135,7 @@ public class PlayerProfile {
         this.build = false;
         this.uuid = uuid;
         this.state = ProfileState.LOBBY;
+        this.options = new ProfileOptions();
         this.kitData = new HashMap<>();
         this.followers = new ArrayList<>();
         this.rankedBan = false;
@@ -175,6 +181,18 @@ public class PlayerProfile {
         }
 
         Document options = (Document) document.get("options");
+        this.options.showScoreboard(((Boolean) options.get("showScoreboard")).booleanValue());
+        this.options.receiveDuelRequests(((Boolean) options.get("receiveDuelRequests")).booleanValue());
+        this.options.allowSpectators(((Boolean) options.get("allowSpectators")).booleanValue());
+        this.options.spectatorMessages(((Boolean) options.get("spectatorMessages")).booleanValue());
+        this.options.showPlayers(((Boolean) options.get("showPlayers")).booleanValue());
+      //  this.options.time(Times.valueOf((String) options.get("time")));
+        this.options.theme(Themes.valueOf((String) options.get("theme")));
+        this.options.pingRange(options.getInteger("pingRange"));
+        this.options.menuSounds(options.getBoolean("menuSounds"));
+       // this.options.killEffect(SpecialEffects.valueOf((String) options.get("killEffect")));
+       // this.options.killMessage(KillMessages.valueOf((String) options.get("killMessage")));
+      //  this.options.trail(Trail.valueOf((String) options.get("trail")));
 
         Document playerStatus = (Document) document.get("status");
         this.setRankedBan(((Boolean) playerStatus.get("rankedBan")).booleanValue());
@@ -230,7 +248,20 @@ public class PlayerProfile {
         document.put("uuid", uuid.toString());
 
         Document optionsDocument = new Document();
+        optionsDocument.put("showScoreboard", options.showScoreboard());
+        optionsDocument.put("receiveDuelRequests", options.receiveDuelRequests());
+        optionsDocument.put("allowSpectators", options.allowSpectators());
+        optionsDocument.put("spectatorMessages", options.spectatorMessages());
+        optionsDocument.put("showPlayers", options.showPlayers());
+      //  optionsDocument.put("time", options.time().toString());
+        optionsDocument.put("theme", options.theme().toString());
+        optionsDocument.put("pingRange", options.pingRange());
+        optionsDocument.put("menuSounds", options.menuSounds());
+       // optionsDocument.put("killEffect", options.killEffect().toString());
+       // optionsDocument.put("killMessage", options.killMessage().toString());
+       // optionsDocument.put("trail", options.trail().toString());
         document.put("options", optionsDocument);
+
         Document statusDocument = new Document();
         statusDocument.put("rankedBan", rankedBan);
         statusDocument.put("rankedBanID", rankedBanID);
@@ -344,6 +375,15 @@ public class PlayerProfile {
         //getPlayer might be null because PlayerProfile.setPlayerState might be trigger when player disconnects
         if (getPlayer() != null) {
             VisibilityController.updateVisibility(getPlayer());
+        }
+    }
+
+
+    public ProfileDivision getDivision() {
+        if (Phantom.getInstance().getDivisionsManager().isXPBased()) {
+            return Phantom.getInstance().getDivisionsManager().getDivisionByXP(this.getExperience());
+        } else {
+            return Phantom.getInstance().getDivisionsManager().getDivisionByELO(this.getGlobalElo());
         }
     }
 
