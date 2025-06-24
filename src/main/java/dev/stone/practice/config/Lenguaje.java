@@ -6,6 +6,7 @@ import net.j4c0b3y.api.config.StaticConfig;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -72,6 +73,17 @@ public class Lenguaje extends StaticConfig {
         public static String NAMETAG_OTHER = "&e";
         public static String NAMETAG_TEAMMATE = "&a";
         public static String NAMETAG_OPPONENT = "&c";
+        public static class POST_INVENTORY {
+            public static String WINNER = "&aWinner: &e";
+            public static String LOSER = "&cLoser: &e";
+            public static String HOVER = "&aClick to view &6<player>'s &ainventory";
+            public static List<String> MESSAGE = Arrays.asList(
+                    "&7&m------------------------------------------------",
+                    "&bPost-Match Inventories &7(click to view)",
+                    "<inventories>",
+                    "&7&m------------------------------------------------"
+            );
+        }
     }
 
     public static class QUEUE_MESSAGES {

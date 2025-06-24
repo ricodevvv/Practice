@@ -11,9 +11,12 @@ import dev.stone.practice.hotbar.Hotbar;
 import dev.stone.practice.party.Party;
 import dev.stone.practice.profile.cooldown.Cooldown;
 import dev.stone.practice.profile.cooldown.CooldownType;
+import dev.stone.practice.profile.cosmetic.killmessages.KillMessages;
+import dev.stone.practice.profile.cosmetic.killeffect.SpecialEffects;
 import dev.stone.practice.profile.division.ProfileDivision;
+import dev.stone.practice.profile.enums.Times;
 import dev.stone.practice.profile.settings.ProfileOptions;
-import dev.stone.practice.profile.themes.Themes;
+import dev.stone.practice.profile.enums.Themes;
 import dev.stone.practice.util.VisibilityController;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,10 +45,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * Project: Phantom
  */
 @Getter @Setter
-public class PlayerProfile {
+public class Profile {
 
 
-   @Getter private static Map<UUID, PlayerProfile> profiles = new HashMap<>();
+   @Getter private static Map<UUID, Profile> profiles = new HashMap<>();
 
     public static MongoCollection<Document> collection;
 
@@ -59,6 +62,7 @@ public class PlayerProfile {
     private final Map<Kit, ProfileKitData> kitData;
     private Party party;
     private final ProfileOptions options;
+    private List<String> permissions;
 
 
     /**
@@ -107,7 +111,7 @@ public class PlayerProfile {
     @Getter @Setter private String rankedBanID;
 
 
-    public PlayerProfile(UUID uuid) {
+    public Profile(UUID uuid) {
         this.uuid = uuid;
         this.build = false;
         this.state = ProfileState.LOBBY;
@@ -115,6 +119,7 @@ public class PlayerProfile {
         this.kitData = new HashMap<>();
         this.followers = new ArrayList<>();
         this.rankedBan = false;
+        this.permissions = new ArrayList<>();
         this.rankedBanReason = "None";
         this.rankedBanID = "None";
         this.coins = 0;
@@ -131,7 +136,7 @@ public class PlayerProfile {
         }
     }
 
-    public PlayerProfile(Player player) {
+    public Profile(Player player) {
         this.build = false;
         this.uuid = uuid;
         this.state = ProfileState.LOBBY;
@@ -139,6 +144,7 @@ public class PlayerProfile {
         this.kitData = new HashMap<>();
         this.followers = new ArrayList<>();
         this.rankedBan = false;
+        this.permissions = new ArrayList<>();
         this.rankedBanReason = "None";
         this.rankedBanID = "None";
         this.coins = 0;
@@ -186,12 +192,12 @@ public class PlayerProfile {
         this.options.allowSpectators(((Boolean) options.get("allowSpectators")).booleanValue());
         this.options.spectatorMessages(((Boolean) options.get("spectatorMessages")).booleanValue());
         this.options.showPlayers(((Boolean) options.get("showPlayers")).booleanValue());
-      //  this.options.time(Times.valueOf((String) options.get("time")));
+        this.options.time(Times.valueOf((String) options.get("time")));
         this.options.theme(Themes.valueOf((String) options.get("theme")));
         this.options.pingRange(options.getInteger("pingRange"));
         this.options.menuSounds(options.getBoolean("menuSounds"));
-       // this.options.killEffect(SpecialEffects.valueOf((String) options.get("killEffect")));
-       // this.options.killMessage(KillMessages.valueOf((String) options.get("killMessage")));
+        this.options.killEffect(SpecialEffects.valueOf((String) options.get("killEffect")));
+        this.options.killMessage(KillMessages.valueOf((String) options.get("killMessage")));
       //  this.options.trail(Trail.valueOf((String) options.get("trail")));
 
         Document playerStatus = (Document) document.get("status");
@@ -253,12 +259,12 @@ public class PlayerProfile {
         optionsDocument.put("allowSpectators", options.allowSpectators());
         optionsDocument.put("spectatorMessages", options.spectatorMessages());
         optionsDocument.put("showPlayers", options.showPlayers());
-      //  optionsDocument.put("time", options.time().toString());
+        optionsDocument.put("time", options.time().toString());
         optionsDocument.put("theme", options.theme().toString());
         optionsDocument.put("pingRange", options.pingRange());
         optionsDocument.put("menuSounds", options.menuSounds());
-       // optionsDocument.put("killEffect", options.killEffect().toString());
-       // optionsDocument.put("killMessage", options.killMessage().toString());
+        optionsDocument.put("killEffect", options.killEffect().toString());
+        optionsDocument.put("killMessage", options.killMessage().toString());
        // optionsDocument.put("trail", options.trail().toString());
         document.put("options", optionsDocument);
 
@@ -317,7 +323,7 @@ public class PlayerProfile {
         collection = Phantom.getInstance().getMongoDatabase().getCollection("profiles");
         // Players might have joined before the plugin finished loading
         for (Player player : Bukkit.getOnlinePlayers()) {
-            PlayerProfile profile = new PlayerProfile(player.getUniqueId());
+            Profile profile = new Profile(player.getUniqueId());
 
             try {
                 profile.load();
@@ -332,7 +338,7 @@ public class PlayerProfile {
 
     public void setupItems() {
         Player player = getPlayer();
-        PlayerProfile profile = PlayerProfile.get(player);
+        Profile profile = Profile.get(player);
         if (player == null) {
             return;
         }
@@ -387,9 +393,17 @@ public class PlayerProfile {
         }
     }
 
+    public void addPermission(String permission) {
+        permissions.add(permission);
+    }
 
-    public static PlayerProfile getByUuid(UUID uuid) {
-        PlayerProfile profile = profiles.get(uuid);
+    public boolean hasPermission(String permission) {
+        return permissions.contains(permission);
+    }
+
+
+    public static Profile getByUuid(UUID uuid) {
+        Profile profile = profiles.get(uuid);
 
         if (profile == null) {
             Common.debug(CC.RED + "Unable to find perfil for uuid: " + uuid);
@@ -398,7 +412,7 @@ public class PlayerProfile {
 
         return profile;
     }
-    public static PlayerProfile get(Player player) {
+    public static Profile get(Player player) {
       return getByUuid(player.getUniqueId());
     }
 }

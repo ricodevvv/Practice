@@ -19,7 +19,7 @@ import dev.stone.practice.match.task.MatchResetTask;
 import dev.stone.practice.match.team.Team;
 import dev.stone.practice.match.team.TeamColor;
 import dev.stone.practice.match.team.TeamPlayer;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.queue.QueueType;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTitle;
@@ -87,17 +87,17 @@ public abstract class Match {
                 end(true, "Another battle is using this field, and the battle's profession requires the use of blocks");
                 return;
             }
-           // arenaDetail.setUsing(true);
+            arenaDetail.setUsing(true);
         }
 
         if(kit.getGameRules().isBuild()) {
-            arenaDetail.takeSnapshot();
+           Phantom.getInstance().getRegeneration().restore(arenaDetail);
         }
 
 
 
         for (Player player : getMatchPlayers()) {
-            PlayerProfile profile = PlayerProfile.getByUuid(player.getUniqueId());
+            Profile profile = Profile.getByUuid(player.getUniqueId());
             profile.setMatch(this);
             profile.setState(ProfileState.FIGHTING);
 
@@ -186,7 +186,7 @@ public abstract class Match {
      * @param profile A random profile from match players which is alive. This is used to create a score cooldown
      * @param scorer The TeamPlayer who scored the point
      */
-    public void score(PlayerProfile profile, TeamPlayer entity, TeamPlayer scorer) {
+    public void score(Profile profile, TeamPlayer entity, TeamPlayer scorer) {
         Team team = getTeam(scorer);
         team.handlePoint();
         if (state == MatchState.FIGHTING && team.getPoints() < kit.getGameRules().getMaximumPoints()) {
@@ -204,7 +204,7 @@ public abstract class Match {
 
     public void die(Player deadPlayer, boolean disconnected) {
         TeamPlayer teamPlayer = getTeamPlayer(deadPlayer);
-        PlayerProfile profile = PlayerProfile.get(deadPlayer);
+        Profile profile = Profile.get(deadPlayer);
         Team team = getTeam(deadPlayer);
 
         teamPlayer.setDisconnected(disconnected); //Set the disconnect state here, so player who already die, do /giveup, and do /spec to join back the match will not have duplicate messages
@@ -242,7 +242,7 @@ public abstract class Match {
         teamPlayer.setRespawning(false);
         getMatchPlayers().forEach(VisibilityController::updateVisibility);
 
-       PlayerProfile profile = PlayerProfile.getByUuid(player.getUniqueId());
+       Profile profile = Profile.getByUuid(player.getUniqueId());
         //So arrow will not be duplicated if GiveBackArrow is on
         profile.getCooldowns().get(CooldownType.ARROW).cancelCountdown();
 
@@ -255,14 +255,14 @@ public abstract class Match {
     }
 
     public void joinSpectate(Player player, Player target) {
-        PlayerProfile profile = PlayerProfile.getByUuid(player.getUniqueId());
+        Profile profile = Profile.getByUuid(player.getUniqueId());
 
         spectators.add(player.getUniqueId());
 
         getPlayersAndSpectators().forEach(other -> {
             //We do not want to send useless stuff to NPC. 'other' might be null because the NPC might be already destroyed because it is dead
             if (other != null) {
-                PlayerProfile otherProfile = PlayerProfile.getByUuid(other.getUniqueId());
+                Profile otherProfile = Profile.getByUuid(other.getUniqueId());
             }
         });
 
@@ -281,7 +281,7 @@ public abstract class Match {
         getPlayersAndSpectators().forEach(other -> {
             //We do not want to send useless stuff to NPC. 'other' might be null because the NPC might be already destroyed because it is dead
             if (other != null) {
-                PlayerProfile otherProfile = PlayerProfile.getByUuid(other.getUniqueId());
+                Profile otherProfile = Profile.getByUuid(other.getUniqueId());
             }
         });
 

@@ -270,9 +270,9 @@ public final class ArenaHandler {
      * @param arena the arena to release
      */
     public void releaseArena(Arena arena) {
-        Preconditions.checkArgument(arena.isInUse(), "Cannot release arena not in use.");
+        Preconditions.checkArgument(arena.isUsing(), "Cannot release arena not in use.");
 
-        arena.setInUse(false);
+        arena.setUsing(false);
         Bukkit.getPluginManager().callEvent(new ArenaReleasedEvent(arena));
     }
 
@@ -287,23 +287,16 @@ public final class ArenaHandler {
                 .filter(arena -> {
                     ArenaSchematic schematic = getSchematic(arena.getSchematic());
                     if (schematic == null) return false;
-
-                    // Verificar si el kit es compatible con la arena
-                    boolean kitCompatible = schematic.getKits().contains(kit.getName()); // Si está vacío, acepta todos
+                    boolean kitCompatible = schematic.getKits().contains(kit.getName());
                     if (!kitCompatible) return false;
-
-                    // Verificar estado de uso
-                    if (arena.isInUse()) return false;
-
+                    if (arena.isUsing()) return false;
                     return true;
                 })
                 .collect(Collectors.toList());
-
         if (availableArenas.isEmpty()) {
             Common.debug("No arena found");
             return null;
         }
-
         return availableArenas.get(ThreadLocalRandom.current().nextInt(availableArenas.size()));
     }
 

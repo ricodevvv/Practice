@@ -5,7 +5,7 @@ import dev.stone.practice.kit.Kit;
 import dev.stone.practice.match.Match;
 import dev.stone.practice.match.MatchState;
 import dev.stone.practice.match.team.Team;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.util.Util;
 import org.bukkit.Location;
@@ -35,7 +35,7 @@ public class BlockBreak implements Listener {
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        PlayerProfile profile = PlayerProfile.get(player);
+        Profile profile = Profile.get(player);
         Block block = event.getBlock();
 
         if (profile.getState() == ProfileState.FIGHTING && profile.getMatch() != null) {

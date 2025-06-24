@@ -5,7 +5,7 @@ import dev.stone.practice.config.Config;
 import dev.stone.practice.config.Lenguaje;
 import dev.stone.practice.kit.Kit;
 import dev.stone.practice.party.Party;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.profile.data.ProfileKitData;
 import dev.stone.practice.queue.task.QueueTask;
@@ -54,7 +54,7 @@ public class Queue {
             return;
         }
 
-        PlayerProfile profile = PlayerProfile.get(player);
+        Profile profile = Profile.get(player);
         if (profile.getState() != ProfileState.LOBBY) {
             player.sendMessage(CC.translate(Lenguaje.QUEUE_MESSAGES.WRONG_STATE));
             return;
@@ -83,7 +83,7 @@ public class Queue {
     }
 
     public static void leaveQueue(Player player) {
-        PlayerProfile profile = PlayerProfile.get(player);
+        Profile profile = Profile.get(player);
         QueueProfile qProfile = players.get(player.getUniqueId());
 
         if (profile.getState() != ProfileState.QUEUEING) {

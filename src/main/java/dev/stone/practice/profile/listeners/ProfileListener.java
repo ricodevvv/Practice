@@ -1,7 +1,7 @@
 package dev.stone.practice.profile.listeners;
 
 import dev.stone.practice.Phantom;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.util.*;
 import net.minecraft.server.v1_8_R3.NBTTagCompound;
@@ -33,9 +33,9 @@ public class ProfileListener implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event) {
         try {
-            PlayerProfile profile = new PlayerProfile(event.getUniqueId());
+            Profile profile = new Profile(event.getUniqueId());
             profile.load();
-            PlayerProfile.getProfiles().put(event.getUniqueId(), profile);
+            Profile.getProfiles().put(event.getUniqueId(), profile);
         } catch (Exception e) {
             e.printStackTrace();
             event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
@@ -62,7 +62,7 @@ public class ProfileListener implements Listener {
     public void OnPlayerQuit(PlayerQuitEvent event) {
         event.setQuitMessage(null);
         Player player = event.getPlayer();
-        PlayerProfile profile = PlayerProfile.getProfiles().get(player.getUniqueId());
+        Profile profile = Profile.getProfiles().get(player.getUniqueId());
         if(profile == null) return;
         new BukkitRunnable() {
             @Override
@@ -70,7 +70,7 @@ public class ProfileListener implements Listener {
                 profile.save();
             }
         }.runTaskAsynchronously(Phantom.getInstance());
-        PlayerProfile.getProfiles().remove(player.getUniqueId());
+        Profile.getProfiles().remove(player.getUniqueId());
     }
 
     @EventHandler
@@ -98,7 +98,7 @@ public class ProfileListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        PlayerProfile profile = PlayerProfile.getByUuid(player.getUniqueId());
+        Profile profile = Profile.getByUuid(player.getUniqueId());
         if (profile.getState() == ProfileState.LOBBY) {
             event.setCancelled(!profile.isBuild());
         }
@@ -106,7 +106,7 @@ public class ProfileListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onBreak(BlockBreakEvent event) {
-    PlayerProfile profile = PlayerProfile.getByUuid(event.getPlayer().getUniqueId());
+    Profile profile = Profile.getByUuid(event.getPlayer().getUniqueId());
         if (!Checker.canDamage(event.getPlayer())) {
             event.setCancelled(!profile.isBuild());
         }
@@ -131,7 +131,7 @@ public class ProfileListener implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void onInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
-        PlayerProfile profile = PlayerProfile.getByUuid(player.getUniqueId());
+        Profile profile = Profile.getByUuid(player.getUniqueId());
 
         if(profile.getState() != ProfileState.FIGHTING) {
             event.setCancelled(!profile.isBuild());

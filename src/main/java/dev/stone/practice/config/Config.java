@@ -44,6 +44,14 @@ public class Config extends StaticConfig {
     @Comment("the initial elo with which everyone will start")
     public static int DEFAULT_GLOBAL_ELO = 1000;
 
+    public static class MENUS_CONFIG {
+    public static int SETTINGS_MENU_SIZE = 36;
+    public static int PROFILE_MENU_SIZE = 36;
+    public static String SETTINGS_MENU_TITLE = "&bSettings Menu";
+    public static String PROFILE_MENU_TITLE = "&bProfile Menu";
+
+    }
+
 
     public static class MATCH_SETTINGS {
         @Comment("the time in seconds it will take to teleport a player to the lobby after finishing a match")

@@ -1,7 +1,7 @@
 package dev.stone.practice.util;
 
 import dev.stone.practice.match.MatchState;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.queue.QueueType;
 import org.bukkit.entity.Player;
@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 public class Checker {
 
     public static boolean canDamage(Player player) {
-        PlayerProfile profile = PlayerProfile.get(player);
+        Profile profile = Profile.get(player);
         return profile.getState() == ProfileState.FIGHTING
                 && profile.getMatch() != null
                 && profile.getMatch().getTeamPlayer(player).isAlive()

@@ -2,7 +2,7 @@ package dev.stone.practice.lobby;
 
 import dev.stone.practice.Phantom;
 import dev.stone.practice.config.Config;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.util.CC;
 import org.bukkit.entity.Player;
@@ -24,7 +24,7 @@ public class LobbyListener implements Listener {
     @EventHandler
     public void onPlayerMoveEvent(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        PlayerProfile profile = PlayerProfile.getByUuid(player.getUniqueId());
+        Profile profile = Profile.getByUuid(player.getUniqueId());
         if (profile != null && (profile.getState() == ProfileState.LOBBY || profile.getState() == ProfileState.QUEUEING) && player.getLocation().getY() < 0) {
             Phantom.getInstance().getLobbyManager().teleport(player);
         }

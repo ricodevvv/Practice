@@ -7,7 +7,7 @@ import dev.stone.practice.kit.Kit;
 import dev.stone.practice.match.impl.SoloMatch;
 import dev.stone.practice.match.team.Team;
 import dev.stone.practice.match.team.TeamPlayer;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.queue.Queue;
 import dev.stone.practice.queue.QueueProfile;
@@ -65,8 +65,8 @@ public class QueueTask extends TaskTicker {
                     continue;
                 }
 
-                PlayerProfile profile1 = PlayerProfile.getByUuid(qProfile1.getPlayerUuid());
-                PlayerProfile profile2 = PlayerProfile.getByUuid(qProfile2.getPlayerUuid());
+                Profile profile1 = Profile.getByUuid(qProfile1.getPlayerUuid());
+                Profile profile2 = Profile.getByUuid(qProfile2.getPlayerUuid());
                 if (profile1.getState() != ProfileState.QUEUEING) {
                     continue;
                 }

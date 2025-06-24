@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import dev.stone.practice.Phantom;
 import dev.stone.practice.config.Config;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -45,7 +45,7 @@ public class LobbyManager {
     }
 
     public void reset(Player player) {
-        PlayerProfile profile = PlayerProfile.getByUuid(player.getUniqueId());
+        Profile profile = Profile.getByUuid(player.getUniqueId());
         if (profile == null) {
             return;
         }

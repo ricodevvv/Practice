@@ -6,7 +6,7 @@ import dev.stone.practice.match.impl.SoloMatch;
 import dev.stone.practice.match.team.Team;
 import dev.stone.practice.match.team.TeamPlayer;
 import dev.stone.practice.party.Party;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.profile.division.ProfileDivision;
 import dev.stone.practice.queue.Queue;
@@ -15,8 +15,6 @@ import dev.stone.practice.util.CC;
 import dev.stone.practice.util.ProgressBar;
 import dev.stone.practice.util.TimeUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,7 +38,7 @@ public class Placeholders {
 
     public String translate(Player player, String str) {
         if (player != null) {
-            PlayerProfile profile = PlayerProfile.get(player);
+            Profile profile = Profile.get(player);
 
             if (profile == null) {
                 return str;
@@ -212,9 +210,9 @@ public class Placeholders {
                 return null;
             } else {
                 return str
-                        .replace("{online-players}", plugin.getCache().getPlayersSize() + "")
-                        .replace("{queue-players}", plugin.getCache().getQueuePlayersSize() + "")
-                        .replace("{match-players}", plugin.getCache().getMatchPlayersSize() + "")
+                        .replace("<online-players>", plugin.getCache().getPlayersSize() + "")
+                        .replace("<queue-players>", plugin.getCache().getQueuePlayersSize() + "")
+                        .replace("<match-players>", plugin.getCache().getMatchPlayersSize() + "")
                         ;
             }
         }

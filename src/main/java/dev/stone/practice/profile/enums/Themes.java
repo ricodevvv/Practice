@@ -1,4 +1,4 @@
-package dev.stone.practice.profile.themes;
+package dev.stone.practice.profile.enums;
 
 import lombok.Getter;
 import org.bukkit.ChatColor;

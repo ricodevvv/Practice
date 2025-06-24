@@ -5,7 +5,7 @@ import dev.stone.practice.kit.Kit;
 import dev.stone.practice.match.Match;
 import dev.stone.practice.match.MatchState;
 import dev.stone.practice.match.team.TeamPlayer;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,7 +26,7 @@ public class PotionListener implements Listener {
     public void onPotionSplashEvent(PotionSplashEvent event) {
         if (event.getPotion().getShooter() instanceof Player) {
             Player player = (Player) event.getEntity().getShooter();
-            PlayerProfile profile = PlayerProfile.get(player);
+            Profile profile = Profile.get(player);
             //PracticePlayer may be null because player left the server but the potion still in there
             if (profile == null) {
                 return;

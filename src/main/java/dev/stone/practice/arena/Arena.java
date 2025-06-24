@@ -80,6 +80,7 @@ public final class Arena {
     private List<Location> eventSpawns;
 
     private int deadzone;
+    @Setter public transient boolean Using;
     private int maxbuild;
     private int portalProtecion = 5;
     private Location cageBlueMin = null;
@@ -97,9 +98,7 @@ public final class Arena {
     // or not in use by the appropriate methods in ArenaHandler
     @Getter
     @Setter(AccessLevel.PACKAGE)
-    private transient boolean inUse;
-
-    private final transient Map<Long, ChunkSnapshot> chunkSnapshots = Maps.newHashMap();
+    
     private static Set<String> kits = new HashSet<>();
 
     public Arena() {
@@ -261,19 +260,6 @@ public final class Arena {
         }
     }
 
-    public void takeSnapshot() {
-        synchronized (chunkSnapshots) {
-            forEachChunk(chunk -> chunkSnapshots.put(LongHash.toLong(chunk.getX(), chunk.getZ()), chunk.takeSnapshot()));
-        }
-    }
-
-    public void restore() {
-        World world = bounds.getWorld();
-        synchronized (chunkSnapshots) {
-            chunkSnapshots.forEach((key, value) -> world.getChunkAt(LongHash.msw(key), LongHash.lsw(key)).restoreSnapshot(value));
-            chunkSnapshots.clear();
-        }
-    }
 
     private void forEachChunk(Callback<Chunk> callback) {
         int lowerX = bounds.getLowerX() >> 4;

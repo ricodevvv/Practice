@@ -3,10 +3,11 @@ package dev.stone.practice.match.task;
 import dev.stone.practice.Phantom;
 import dev.stone.practice.config.Config;
 import dev.stone.practice.events.MatchResetEvent;
+import dev.stone.practice.hotbar.Hotbar;
 import dev.stone.practice.match.Match;
 import dev.stone.practice.match.MatchTaskTicker;
 import dev.stone.practice.match.impl.SoloMatch;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import org.bukkit.scheduler.BukkitRunnable;
 import java.util.Objects;
 
@@ -37,12 +38,12 @@ public class MatchResetTask extends MatchTaskTicker {
 
             match.clearEntities(true);
             match.getMatchPlayers().stream().filter(player -> Objects.nonNull(player) && player.isOnline())
-                    .filter(player -> PlayerProfile.getByUuid(player.getUniqueId()).getMatch() == match) //This is to prevent player is in another match because of the requeue item
+                    .filter(player -> Profile.getByUuid(player.getUniqueId()).getMatch() == match) //This is to prevent player is in another match because of the requeue item
                     .forEach(player -> plugin.getLobbyManager().sendToSpawnAndReset(player));
             match.getSpectators().forEach(match::leaveSpectate);
             match.getTasks().forEach(BukkitRunnable::cancel);
-            match.getArenaDetail().restore();
-           // match.getArenaDetail().setUsing(false);
+            Phantom.getInstance().getRegeneration().restore(match.getArenaDetail());
+            Phantom.getInstance().getArenaHandler().releaseArena(match.getArenaDetail());
             Phantom.getInstance().getMatchHandler().getMatches().remove(match.getUuid());
         }
     }
@@ -61,10 +62,10 @@ public class MatchResetTask extends MatchTaskTicker {
                             .filter(Objects::nonNull) //If match players contains citizens NPC, because of it is already destroyed, it will be null
                            // .filter(player -> !EdenEvent.isInEvent(player)) //Do not give player 'Play Again' item if they are in an event
                             .forEach(player -> {
-                               PlayerProfile profile = PlayerProfile.getByUuid(player.getUniqueId());
+                               Profile profile = Profile.getByUuid(player.getUniqueId());
                                 if (profile.getMatch() == match) {
                                     player.getInventory().clear();
-                               //     EdenItems.giveItem(player, EdenItems.MATCH_REQUEUE);
+                                    Hotbar.giveItem(player, Hotbar.MATCH_REQUEUE);
                                 }
                             });
                 }

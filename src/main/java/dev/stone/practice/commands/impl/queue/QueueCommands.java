@@ -3,7 +3,7 @@ package dev.stone.practice.commands.impl.queue;
 import dev.stone.practice.commands.PotPvPCommand;
 import dev.stone.practice.config.Lenguaje;
 import dev.stone.practice.party.Party;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.queue.Queue;
 import dev.stone.practice.queue.QueueProfile;
@@ -40,7 +40,7 @@ public class QueueCommands implements PotPvPCommand {
     @Command(name = "", desc = "Leave from kit queue")
     @Require("phantom.queue.join")
     public void OnJoin(@Sender Player player, String queue) {
-        PlayerProfile profile = PlayerProfile.get(player);
+        Profile profile = Profile.get(player);
         if(profile.getState() != ProfileState.LOBBY) {
             player.sendMessage(CC.translate(Lenguaje.QUEUE_MESSAGES.CANNOT_QUIT_QUEUE));
             return;

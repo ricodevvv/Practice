@@ -11,6 +11,9 @@ import dev.stone.practice.match.MatchType;
 import dev.stone.practice.match.team.Team;
 import dev.stone.practice.match.team.TeamPlayer;
 import dev.stone.practice.queue.QueueType;
+import dev.stone.practice.util.CC;
+import dev.stone.practice.util.Clickable;
+import dev.stone.practice.util.Common;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 
@@ -58,7 +61,28 @@ public class SoloMatch extends Match {
 
     @Override
     public void displayMatchEndMessages() {
+        TeamPlayer winner = getWinningPlayers().get(0);
+        TeamPlayer loser = getOpponent(winner);
+        Clickable clickable = new Clickable(
+                Lenguaje.MATCH_MESSAGES.POST_INVENTORY.WINNER + winner.getUsername(),
+                Lenguaje.MATCH_MESSAGES.POST_INVENTORY.HOVER.replace("<player>", winner.getUsername()),
+                "/viewinv " + winner.getUuid()
+        );
 
+        clickable.add(
+                CC.GRAY + " - " +
+                        Lenguaje.MATCH_MESSAGES.POST_INVENTORY.LOSER + loser.getUsername(),
+                Lenguaje.MATCH_MESSAGES.POST_INVENTORY.HOVER.replace("<player>", winner.getUsername()),
+                "/viewinv " + loser.getUuid()
+        );
+
+        Lenguaje.MATCH_MESSAGES.POST_INVENTORY.MESSAGE.forEach(s -> {
+            if (s.contains("<post-match-inventories>")) {
+                getPlayersAndSpectators().forEach(clickable::sendToPlayer);
+            } else {
+                getPlayersAndSpectators().forEach(p -> Common.sendMessage(p, s));
+            }
+        });
     }
 
     @Override

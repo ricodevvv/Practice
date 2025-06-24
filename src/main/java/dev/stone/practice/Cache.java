@@ -1,6 +1,6 @@
 package dev.stone.practice;
 
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.util.TaskTicker;
 import lombok.Getter;
@@ -26,8 +26,8 @@ public class Cache {
             @Override
             public void onRun() {
                 playersSize = Bukkit.getOnlinePlayers().size();
-                queuePlayersSize = (int) PlayerProfile.getProfiles().values().stream().filter(p -> p.getState() == ProfileState.QUEUEING).count();
-                matchPlayersSize = (int) PlayerProfile.getProfiles().values().stream().filter(p -> p.getState() == ProfileState.FIGHTING || p.getState() == ProfileState.SPECTATING).count();
+                queuePlayersSize = (int) Profile.getProfiles().values().stream().filter(p -> p.getState() == ProfileState.QUEUEING).count();
+                matchPlayersSize = (int) Profile.getProfiles().values().stream().filter(p -> p.getState() == ProfileState.FIGHTING || p.getState() == ProfileState.SPECTATING).count();
             }
 
             @Override

@@ -8,7 +8,7 @@ import dev.stone.practice.match.MatchState;
 import dev.stone.practice.match.task.MatchRespawnTask;
 import dev.stone.practice.match.team.Team;
 import dev.stone.practice.match.team.TeamPlayer;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.profile.cooldown.CooldownType;
 import dev.stone.practice.util.Common;
@@ -40,7 +40,7 @@ public class PlayerMove implements Listener {
         Player player = event.getPlayer();
         Location from = event.getFrom();
         Location to = event.getTo();
-        PlayerProfile profile = PlayerProfile.get(player);
+        Profile profile = Profile.get(player);
         if(profile == null) return;
 
         Block block = to.getBlock();
@@ -68,7 +68,7 @@ public class PlayerMove implements Listener {
             //Prevent any duplicate scoring
             //If two people go into the portal at the same time in bridge, it will count as +2 points
             //If player go into the water and PlayerMoveEvent is too slow to perform teleportation, it will run MatchNewRoundTask multiple times
-            if (match.getMatchPlayers().stream().allMatch(p -> PlayerProfile
+            if (match.getMatchPlayers().stream().allMatch(p -> Profile
                     .get(p)
                     .getCooldowns()
                     .get(CooldownType.SCORE)
@@ -117,7 +117,7 @@ public class PlayerMove implements Listener {
         }
     }
     public void onDeath(Player player) {
-        PlayerProfile profile = PlayerProfile.get(player);
+        Profile profile = Profile.get(player);
         if(profile.getMatch().canEnd()) {
             return;
         }

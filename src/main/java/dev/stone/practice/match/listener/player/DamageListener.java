@@ -6,11 +6,10 @@ import dev.stone.practice.match.Match;
 import dev.stone.practice.match.MatchState;
 import dev.stone.practice.match.team.Team;
 import dev.stone.practice.match.team.TeamPlayer;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.util.DamageCalculator;
 import dev.stone.practice.util.Util;
-import dev.stone.practice.util.exception.PracticeUnexpectedException;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -36,7 +35,7 @@ public class DamageListener implements Listener {
         }
 
         Player player = (Player) event.getEntity();
-        PlayerProfile profile = PlayerProfile.get(player);
+        Profile profile = Profile.get(player);
 
         //profile will be null when damaged player is a citizens player NPC, but is not a pvp bot
         if (profile == null) {
@@ -87,8 +86,8 @@ public class DamageListener implements Listener {
                 return;
             }
 
-            PlayerProfile entityProfile = PlayerProfile.get(entity);
-            PlayerProfile damagerProfile = PlayerProfile.get(damager);
+            Profile entityProfile = Profile.get(entity);
+            Profile damagerProfile = Profile.get(damager);
 
             //profile will be null when damaged player is a citizens player NPC, but is not a pvp bot
             if (entityProfile == null) {

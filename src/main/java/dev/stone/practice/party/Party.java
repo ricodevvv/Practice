@@ -1,6 +1,6 @@
 package dev.stone.practice.party;
 
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 
@@ -22,6 +22,6 @@ public class Party {
 
 
     public static Party getByPlayer(Player player) {
-        return PlayerProfile.get(player).getParty();
+        return Profile.get(player).getParty();
     }
 }

@@ -2,7 +2,7 @@ package dev.stone.practice.match.listener.blocks;
 
 import dev.stone.practice.match.Match;
 import dev.stone.practice.match.MatchState;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -24,7 +24,7 @@ public class BucketEmpty implements Listener {
     @EventHandler
     public void onBucketEmpty(PlayerBucketEmptyEvent event) {
         Player player = event.getPlayer();
-        PlayerProfile profile = PlayerProfile.get(player);
+        Profile profile = Profile.get(player);
         Block block = event.getBlockClicked().getRelative(event.getBlockFace());
 
         if (profile.getState() == ProfileState.FIGHTING && profile.getMatch() != null) {
@@ -53,7 +53,7 @@ public class BucketEmpty implements Listener {
     @EventHandler
     public void onBucketFill(PlayerBucketFillEvent event) {
         Player player = event.getPlayer();
-        PlayerProfile profile = PlayerProfile.get(player);
+        Profile profile = Profile.get(player);
         Block block = event.getBlockClicked().getRelative(event.getBlockFace());
 
         if (profile.getState() == ProfileState.FIGHTING && profile.getMatch() != null) {

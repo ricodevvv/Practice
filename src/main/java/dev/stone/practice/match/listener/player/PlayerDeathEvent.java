@@ -4,7 +4,7 @@ import dev.stone.practice.kit.KitGameRules;
 import dev.stone.practice.match.Match;
 import dev.stone.practice.match.task.MatchRespawnTask;
 import dev.stone.practice.match.team.TeamPlayer;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -30,7 +30,7 @@ public class PlayerDeathEvent implements Listener {
         event.setDeathMessage(null);
 
         Player player = event.getEntity();
-        PlayerProfile profile = PlayerProfile.get(player);
+        Profile profile = Profile.get(player);
 
         if(profile == null) return;
 

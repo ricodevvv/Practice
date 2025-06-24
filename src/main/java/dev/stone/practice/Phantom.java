@@ -7,6 +7,9 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import dev.stone.practice.adapter.scoreboard.ScoreboardAdapter;
 import dev.stone.practice.arena.ArenaHandler;
+import dev.stone.practice.arena.regen.IArenaRegen;
+import dev.stone.practice.arena.regen.RegenerationManager;
+import dev.stone.practice.arena.regen.impl.legacy.chunk.ChunkRestorationManager;
 import dev.stone.practice.commands.binds.ChatColorProvider;
 import dev.stone.practice.commands.binds.UUIDDrinkProvider;
 import dev.stone.practice.commands.impl.ArenaCommands;
@@ -14,6 +17,7 @@ import dev.stone.practice.commands.impl.KitCommands;
 import dev.stone.practice.commands.impl.dev.MatchDebugCommand;
 import dev.stone.practice.commands.impl.misc.SetLobbyCommand;
 import dev.stone.practice.commands.impl.profile.ProfileBuildCommand;
+import dev.stone.practice.commands.impl.profile.ProfileSettingsCommand;
 import dev.stone.practice.commands.impl.queue.QueueCommands;
 import dev.stone.practice.config.Config;
 import dev.stone.practice.config.Lenguaje;
@@ -32,13 +36,11 @@ import dev.stone.practice.match.listener.player.PlayerDeathEvent;
 import dev.stone.practice.match.listener.player.PlayerMove;
 import dev.stone.practice.match.listener.player.PlayerQuitEvent;
 import dev.stone.practice.match.listener.potion.PotionListener;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.division.DivisionsManager;
 import dev.stone.practice.profile.listeners.ProfileListener;
 import dev.stone.practice.queue.Queue;
 import dev.stone.practice.util.CC;
-import dev.stone.practice.util.ChunkSnapshotAdapter;
-import dev.stone.practice.util.NameThreadFactory;
 import dev.stone.practice.util.config.impl.BasicConfigurationFile;
 import dev.stone.practice.util.menu.MenuListener;
 import dev.stone.practice.util.procedure.ProcedureListener;
@@ -61,12 +63,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.BlockVector;
 import org.bukkit.util.Vector;
 import xyz.refinedev.command.CommandHandler;
-import xyz.refinedev.spigot.api.chunk.ChunkSnapshot;
+
 import java.util.Arrays;
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 
 @Getter
@@ -83,7 +82,6 @@ public final class Phantom extends JavaPlugin {
             .registerTypeHierarchyAdapter(Location.class, new LocationAdapter())
             .registerTypeHierarchyAdapter(Vector.class, new VectorAdapter())
             .registerTypeAdapter(BlockVector.class, new BlockVectorAdapter())
-            .registerTypeAdapter(ChunkSnapshot.class, new ChunkSnapshotAdapter())
             .serializeNulls()
             .create();
 
@@ -112,6 +110,8 @@ public final class Phantom extends JavaPlugin {
     public Placeholders placeholders;
     private SconeyHandler scoreboardHandler;
     private DivisionsManager divisionsManager;
+    private ChunkRestorationManager chunkRestorationManager;
+    private IArenaRegen regeneration;
 
 
     @Override
@@ -153,7 +153,7 @@ public final class Phantom extends JavaPlugin {
         this.loadListeners();
         this.logger("Registering listeners...");
 
-        PlayerProfile.init();
+        Profile.init();
         Queue.init();
         this.divisionsManager = new DivisionsManager(this);
         this.divisionsManager.init();
@@ -173,6 +173,9 @@ public final class Phantom extends JavaPlugin {
 
         arenaHandler = new ArenaHandler();
         this.matchHandler = new MatchHandler("Starting MatchHandler");
+        this.chunkRestorationManager = new ChunkRestorationManager();
+        this.regeneration = RegenerationManager.get();
+        consoleLog("Found "  + " Regeneration Adapter");
 
         // Scoreboard load
         this.scoreboardHandler = new SconeyHandler(this, new ScoreboardAdapter());
@@ -195,6 +198,7 @@ public final class Phantom extends JavaPlugin {
         commandHandler.register(new SetLobbyCommand(), "setlobby");
         commandHandler.register(new MatchDebugCommand(), "debugmatch");
         commandHandler.register(new QueueCommands(), "queue");
+        commandHandler.register(new ProfileSettingsCommand(), "profilesettings");
         commandHandler.registerCommands();
         this.logger("Registered commands!");
     }
@@ -255,11 +259,11 @@ public final class Phantom extends JavaPlugin {
     }
 
     public void logger(String message) {
-        this.getServer().getConsoleSender().sendMessage(CC.translate("&c• " + message));
+        this.getServer().getConsoleSender().sendMessage(CC.translate("§8[§bPractice§8] §f" + message));
     }
 
     public void consoleLog(String string) {
-        this.getServer().getConsoleSender().sendMessage(CC.translate(string));
+        this.getServer().getConsoleSender().sendMessage(CC.translate("§8[§bPractice§8] §f" + string));
     }
 
 }

@@ -4,7 +4,7 @@ import dev.stone.practice.Phantom;
 import dev.stone.practice.config.Scoreboard;
 import dev.stone.practice.match.Match;
 import dev.stone.practice.party.Party;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.queue.Queue;
 import dev.stone.practice.queue.QueueProfile;
@@ -40,7 +40,7 @@ public class ScoreboardAdapter implements SconeyElementAdapter {
         element.setTitle(Scoreboard.TITLE);
         element.setMode(SconeyElementMode.CUSTOM);
 
-        PlayerProfile profile = PlayerProfile.get(player);
+        Profile profile = Profile.get(player);
 
         if (profile == null) {
             return element;

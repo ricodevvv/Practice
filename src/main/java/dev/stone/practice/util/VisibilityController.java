@@ -2,7 +2,7 @@ package dev.stone.practice.util;
 
 import dev.stone.practice.config.Config;
 import dev.stone.practice.match.Match;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
@@ -45,8 +45,8 @@ public class VisibilityController {
             return true;
         }
 
-        PlayerProfile pViewer = PlayerProfile.get(viewer);
-        PlayerProfile pTarget = PlayerProfile.get(target);
+        Profile pViewer = Profile.get(viewer);
+        Profile pTarget = Profile.get(target);
 
         Match targetMatch = pTarget.getMatch();
 

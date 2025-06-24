@@ -3,8 +3,7 @@ package dev.stone.practice.match.listener.blocks;
 import dev.stone.practice.config.Config;
 import dev.stone.practice.match.Match;
 import dev.stone.practice.match.MatchState;
-import dev.stone.practice.match.team.TeamPlayer;
-import dev.stone.practice.profile.PlayerProfile;
+import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.util.Util;
 import org.bukkit.Material;
@@ -29,7 +28,7 @@ public class BlockPlace implements Listener {
     @EventHandler
     public void onPlace(BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        PlayerProfile profile = PlayerProfile.get(player);
+        Profile profile = Profile.get(player);
         Block block = event.getBlockPlaced();
 
         if (profile.getState() == ProfileState.FIGHTING && profile.getMatch() != null) {
