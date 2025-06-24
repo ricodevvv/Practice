@@ -88,6 +88,12 @@ public class Util {
         }
     }
 
+    public static int getNewRating(int rating, int opponentRating, double score) {
+        double kFactor = 32;
+        double expectedScore = 1.0 / (1.0 + Math.pow(10.0, ((double) (opponentRating - rating) / 400.0)));
+        return rating + (int) (kFactor * (score - expectedScore));
+    }
+
 
     /**
      * scans an area in search of a bed is used for kits like BedFight

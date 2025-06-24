@@ -5,6 +5,7 @@ import net.j4c0b3y.api.config.ConfigHandler;
 import net.j4c0b3y.api.config.StaticConfig;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,8 +35,9 @@ public class Config extends StaticConfig {
     );
 
     @Comment("The default theme for new users")
-    public static String DEFAULT_THEME = "AQUA"
-;
+    public static String DEFAULT_THEME = "AQUA";
+    public static List<String> WIN_COMMANDS = new ArrayList<>();
+    public static List<String> LOSE_COMMANDS = new ArrayList<>();
     public static int RANKED_WINS_REQUIRED = 10;
 
     @Comment("For developers only, do not touch")

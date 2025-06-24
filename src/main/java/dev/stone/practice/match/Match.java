@@ -91,7 +91,7 @@ public abstract class Match {
         }
 
         if(kit.getGameRules().isBuild()) {
-           Phantom.getInstance().getRegeneration().restore(arenaDetail);
+           Phantom.getInstance().getRegeneration().takeSnapshot(arenaDetail);
         }
 
 
@@ -121,12 +121,13 @@ public abstract class Match {
               }
             }
             player.updateInventory();
-
-
+            //Create the health display under NameTag, if needed
+            if (kit.getGameRules().isShowHealth()) {
+                plugin.getScoreboardHandler().getScoreboard(player).registerHealthObjective();
+                player.setHealth(player.getMaxHealth() - 0.001); //Fix for health display as 0 - #379
+            }
             //Set up the knockback
-
         }
-
         //Teleport players into their team spawn
         teams.forEach(team -> team.teleport(team.getSpawnLocation()));
 

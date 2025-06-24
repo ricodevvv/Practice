@@ -1,9 +1,9 @@
 package dev.stone.practice.match;
 
-import lombok.Getter;
 import dev.stone.practice.match.team.TeamPlayer;
 import dev.stone.practice.util.HeadUtil;
 import dev.stone.practice.util.HealingMethod;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -17,7 +17,7 @@ import java.util.UUID;
  * Redistribution of this Project is not allowed
  *
  * @author ricadev
- * Created: 11/06/2025
+ * Created: 24/06/2025
  * Project: Practice
  */
 @Getter
@@ -80,4 +80,3 @@ public class PostMatchInventory {
     }
 
 }
-

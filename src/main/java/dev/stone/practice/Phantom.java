@@ -15,6 +15,7 @@ import dev.stone.practice.commands.binds.UUIDDrinkProvider;
 import dev.stone.practice.commands.impl.ArenaCommands;
 import dev.stone.practice.commands.impl.KitCommands;
 import dev.stone.practice.commands.impl.dev.MatchDebugCommand;
+import dev.stone.practice.commands.impl.match.ViewInventoryCommand;
 import dev.stone.practice.commands.impl.misc.SetLobbyCommand;
 import dev.stone.practice.commands.impl.profile.ProfileBuildCommand;
 import dev.stone.practice.commands.impl.profile.ProfileSettingsCommand;
@@ -124,7 +125,6 @@ public final class Phantom extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.consoleLog("&c------------------------------------------------");
         this.configHandler = new ConfigHandler();
         configHandler.setKeyFormatter(key -> key.replace("_", "-"));
         configHandler.setKeyFormatter(CC::translate);
@@ -175,13 +175,11 @@ public final class Phantom extends JavaPlugin {
         this.matchHandler = new MatchHandler("Starting MatchHandler");
         this.chunkRestorationManager = new ChunkRestorationManager();
         this.regeneration = RegenerationManager.get();
-        consoleLog("Found "  + " Regeneration Adapter");
 
         // Scoreboard load
         this.scoreboardHandler = new SconeyHandler(this, new ScoreboardAdapter());
         this.consoleLog("");
         this.consoleLog("&7Initialized &cPhantom &7Successfully!");
-        this.consoleLog("&c------------------------------------------------");
     }
 
     @Override
@@ -198,7 +196,8 @@ public final class Phantom extends JavaPlugin {
         commandHandler.register(new SetLobbyCommand(), "setlobby");
         commandHandler.register(new MatchDebugCommand(), "debugmatch");
         commandHandler.register(new QueueCommands(), "queue");
-        commandHandler.register(new ProfileSettingsCommand(), "profilesettings");
+        commandHandler.register(new ProfileSettingsCommand(), "psettings");
+        commandHandler.register(new ViewInventoryCommand(), "viewinv");
         commandHandler.registerCommands();
         this.logger("Registered commands!");
     }
@@ -259,7 +258,7 @@ public final class Phantom extends JavaPlugin {
     }
 
     public void logger(String message) {
-        this.getServer().getConsoleSender().sendMessage(CC.translate("§8[§bPractice§8] §f" + message));
+        this.getServer().getConsoleSender().sendMessage(CC.translate("§8[§bPractice§8] &f" + message));
     }
 
     public void consoleLog(String string) {

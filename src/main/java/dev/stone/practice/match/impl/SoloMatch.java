@@ -2,6 +2,7 @@ package dev.stone.practice.match.impl;
 
 import dev.stone.practice.Phantom;
 import dev.stone.practice.arena.Arena;
+import dev.stone.practice.config.Config;
 import dev.stone.practice.config.Lenguaje;
 import dev.stone.practice.config.Scoreboard;
 import dev.stone.practice.kit.Kit;
@@ -10,11 +11,16 @@ import dev.stone.practice.match.MatchState;
 import dev.stone.practice.match.MatchType;
 import dev.stone.practice.match.team.Team;
 import dev.stone.practice.match.team.TeamPlayer;
+import dev.stone.practice.profile.Profile;
+import dev.stone.practice.profile.data.ProfileKitData;
 import dev.stone.practice.queue.QueueType;
 import dev.stone.practice.util.CC;
 import dev.stone.practice.util.Clickable;
 import dev.stone.practice.util.Common;
+import dev.stone.practice.util.Util;
 import lombok.Getter;
+import org.apache.commons.lang.Validate;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -77,7 +83,7 @@ public class SoloMatch extends Match {
         );
 
         Lenguaje.MATCH_MESSAGES.POST_INVENTORY.MESSAGE.forEach(s -> {
-            if (s.contains("<post-match-inventories>")) {
+            if (s.contains("<inventories>")) {
                 getPlayersAndSpectators().forEach(clickable::sendToPlayer);
             } else {
                 getPlayersAndSpectators().forEach(p -> Common.sendMessage(p, s));
@@ -95,7 +101,70 @@ public class SoloMatch extends Match {
 
     @Override
     public void calculateMatchStats() {
+        TeamPlayer tWinner = getWinningPlayers().get(0);
+        TeamPlayer tLoser = getOpponent(getWinningPlayers().get(0));
 
+        //Set Post-Match Inventories swtichTo
+        getPostMatchInventories().get(tWinner.getUuid()).setSwitchTo(tLoser.getUsername(), tLoser.getUuid());
+        getPostMatchInventories().get(tLoser.getUuid()).setSwitchTo(tWinner.getUsername(), tWinner.getUuid());
+
+        //Because this is a duel match, we don't increase win/lose in player statistics and don't calculate the elo afterwards
+        if (isDuel()) {
+            return;
+        }
+
+        Profile pWinner = Profile.getByUuid(tWinner.getUuid());
+        Profile pLoser = Profile.getByUuid(tLoser.getUuid());
+        Validate.notNull(pWinner);
+        Validate.notNull(pLoser);
+
+        ProfileKitData kWinner = pWinner.getKitData().get(getKit());
+        ProfileKitData kLoser = pLoser.getKitData().get(getKit());
+
+        if (getQueueType() == QueueType.RANKED) {
+            int oldWinnerElo = kWinner.getElo();
+            int oldLoserElo = kLoser.getElo();
+
+            int newWinnerElo = Util.getNewRating(oldWinnerElo, oldLoserElo, 1);
+            int newLoserElo = Util.getNewRating(oldLoserElo, oldWinnerElo, 0);
+
+            kWinner.setElo(newWinnerElo);
+            kLoser.setElo(newLoserElo);
+
+            int winnerEloChange = newWinnerElo - oldWinnerElo;
+            int loserEloChange = oldLoserElo - newLoserElo;
+
+            broadcastMessage(Lenguaje.MATCH_MESSAGES.POST_INVENTORY.RATING_CHANGE
+                    .replace("<winner>", pWinner.getName())
+                    .replace("<winner_elo>", String.valueOf(winnerEloChange))
+                    .replace("<winner_new_elo>", String.valueOf( newWinnerElo))
+                    .replace("<loser>", pLoser.getName())
+                    .replace("<loser_elo>", String.valueOf(loserEloChange))
+                    .replace("<loser_new_elo>", String.valueOf( newLoserElo))
+
+            );
+        }
+
+        kWinner.incrementWon(getQueueType() == QueueType.RANKED);
+        kLoser.incrementLost(getQueueType() == QueueType.RANKED);
+
+        kWinner.calculateWinstreak(true);
+        kLoser.calculateWinstreak(false);
+
+        List<String> winCommands = Config.WIN_COMMANDS;
+        List<String> loseCommands = Config.LOSE_COMMANDS;
+        if (!winCommands.isEmpty()) {
+            for (String cmd : winCommands) {
+                String c = cmd.replace("<player>", tWinner.getUsername());
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), c);
+            }
+        }
+        if (!loseCommands.isEmpty()) {
+            for (String cmd1 : loseCommands) {
+                String d = cmd1.replace("<loser-player>", tLoser.getUsername());
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), d);
+            }
+        }
     }
 
     @Override

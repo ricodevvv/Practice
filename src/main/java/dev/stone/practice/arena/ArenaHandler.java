@@ -245,7 +245,7 @@ public final class ArenaHandler {
             }
 
             for (Arena arena : arenaInstances.get(schematic.getName()).values()) {
-                if (!arena.isInUse()) {
+                if (!arena.isUsing()) {
                     acceptableArenas.add(arena);
                 }
             }
@@ -257,7 +257,7 @@ public final class ArenaHandler {
 
         Arena selected = acceptableArenas.get(ThreadLocalRandom.current().nextInt(acceptableArenas.size()));
 
-        selected.setInUse(true);
+        selected.setUsing(true);
         Bukkit.getPluginManager().callEvent(new ArenaAllocatedEvent(selected));
 
         return Optional.of(selected);

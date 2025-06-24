@@ -6,7 +6,6 @@ import net.j4c0b3y.api.config.StaticConfig;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -74,6 +73,15 @@ public class Lenguaje extends StaticConfig {
         public static String NAMETAG_TEAMMATE = "&a";
         public static String NAMETAG_OPPONENT = "&c";
         public static class POST_INVENTORY {
+            public static String MENU_TITLE = "Inventory of <player>";
+            public static String VIEW_INVENTORY = "&eView <player>'s inventory";
+            public static String PLAYER_INFO_NAME = "&bPlayer Information";
+            public static List<String> PLAYER_INFO = Arrays.asList(
+                    "",
+                    "&fHearts: &b<hearts>/<max_heart> &4❤",
+                    "&fHunger: &b<hunger>/20",
+                    ""
+            );
             public static String WINNER = "&aWinner: &e";
             public static String LOSER = "&cLoser: &e";
             public static String HOVER = "&aClick to view &6<player>'s &ainventory";
@@ -83,6 +91,7 @@ public class Lenguaje extends StaticConfig {
                     "<inventories>",
                     "&7&m------------------------------------------------"
             );
+            public static String RATING_CHANGE = "&eELO changes: &a<winner> +<winner_elo> (<winner_new_elo>)  &c<loser> - <loser_elo> (<loser_new_elo>)";
         }
     }
 

@@ -26,7 +26,7 @@ import dev.stone.practice.util.AngleUtils;
 
 /**
  * Represents a pasted instance of an {@link ArenaSchematic}.
- * See {@link net.frozenorb.potpvp.arena} for a comparision of
+ * See {@link dev.stone.practice.arena} for a comparision of
  * {@link Arena}s and {@link ArenaSchematic}s.
  */
 @Getter
@@ -36,7 +36,7 @@ public final class Arena {
      * The name of the {@link ArenaSchematic} this Arena is
      * copied from.
      *
-     * @see net.frozenorb.potpvp.arena
+     * @see dev.stone.practice.arena
      */
     @Getter
     private String schematic;
@@ -44,7 +44,7 @@ public final class Arena {
     /**
      * What number copy this arena is.
      *
-     * @see net.frozenorb.potpvp.arena
+     * @see dev.stone.practice.arena
      */
     @Getter
     private int copy;
@@ -98,7 +98,7 @@ public final class Arena {
     // or not in use by the appropriate methods in ArenaHandler
     @Getter
     @Setter(AccessLevel.PACKAGE)
-    
+
     private static Set<String> kits = new HashSet<>();
 
     public Arena() {
