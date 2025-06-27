@@ -49,33 +49,33 @@ public class Scoreboard extends StaticConfig {
 
     public static final List<String> IN_PARTY_SCOREBOARD = Arrays.asList(
             "&7&m----------------------",
-            "&b&l┃ &fOnline: &b{online-players}",
-            "&b&l┃ &fIn Queue: &b{queue-players}",
-            "&b&l┃ &fIn Fights: &b{match-players}",
+            "&c&l┃ &fOnline: &b{online-players}",
+            "&c&l┃ &fIn Queue: &b{queue-players}",
+            "&c&l┃ &fIn Fights: &b{match-players}",
             "",
-            "&b&l┃ &fTeam:",
-            "&b&l┃ &f Leader: &b{party-leader}",
-            "&b&l┃ &f Member(s): &b{party-members}&7/&b{party-max}",
+            "&c&l┃ &fTeam:",
+            "&c&l┃ &f Leader: &b{party-leader}",
+            "&c&l┃ &f Member(s): &b{party-members}&7/&b{party-max}",
             "{event-information}",
             "&7&m----------------------"
     );
 
     public static final List<String> IN_QUEUE_UNRANKED_SCOREBOARD = Arrays.asList(
             "&7&m----------------------",
-            "&b&l┃ &fOnline: <theme>{online-players}",
-            "&b&l┃ &fIn Queue: <theme>{queue-players}",
-            "&b&l┃ &fIn Fights: <theme>{match-players}",
+            "&c&l┃ &fOnline: <theme>{online-players}",
+            "&c&l┃ &fIn Queue: <theme>{queue-players}",
+            "&c&l┃ &fIn Fights: <theme>{match-players}",
             "",
-            "&b&l┃ &fQueuing: <theme>{queue-kit}",
-            "&b&l┃ &fTime: <theme>{queue-time}",
-            "&b&l┃ &fPing Range: &b{ping-range}",
+            "&c&l┃ &fQueuing: <theme>{queue-kit}",
+            "&c&l┃ &fTime: <theme>{queue-time}",
+            "&c&l┃ &fPing Range: &b{ping-range}",
             "&7&m----------------------"
     );
 
     public static final List<String> IN_QUEUE_RANKED_SCOREBOARD = Arrays.asList(
             "&7&m----------------------",
-            "&b&l┃ &fOnline: &b{online-players}",
-            "&b&l┃ &fIn Queue: &b{queue-players}",
+            "&c&l┃ &fOnline: &b{online-players}",
+            "&c&l┃ &fIn Queue: &b{queue-players}",
             "&b&l┃ &fIn Fights: &b{match-players}",
             "",
             "&b&l┃ &fQueuing: &b{queue-kit}",
