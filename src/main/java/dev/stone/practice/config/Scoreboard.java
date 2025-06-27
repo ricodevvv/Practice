@@ -36,9 +36,9 @@ public class Scoreboard extends StaticConfig {
 
     public static  List<String> LOBBY_SCOREBOARD = Arrays.asList(
             "&7&m----------------------",
-            "&b &fOnline: <theme><online-players>",
-            "&b &fIn Fight: <theme><match-players>",
-            "&b &fIn Queue: <theme><queue-players>",
+            "&c &fOnline: <theme><online-players>",
+            "&c &fIn Fight: <theme><match-players>",
+            "&c &fIn Queue: <theme><queue-players>",
             "",
             "&fLevel: <theme><player_level>✮",
             "&fDivision: <player_division>",
