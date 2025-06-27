@@ -61,7 +61,7 @@ public class PlayerMove implements Listener {
                 player.teleport(location);
                 return;
             }
-            if ((!arena.getBounds().clone().outset(Cuboid.CuboidDirection.HORIZONTAL, 10).contains(player) || arena.getDeadzone() > player.getLocation().getY())) {
+            if ((!arena.getBounds().clone().outset(Cuboid.CuboidDirection.HORIZONTAL, 50).contains(player) || arena.getDeadzone() > player.getLocation().getY())) {
                 onDeath(player);
                 return;
             }
