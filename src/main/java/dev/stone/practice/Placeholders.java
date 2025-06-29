@@ -72,8 +72,8 @@ public class Placeholders {
             }
             if (party != null) {
                 str = str
-                        //   .replace("{party-leader}", party.getLeader().getUsername())
-                        //  .replace("{party-members}", party.getAllPartyMembers().size() + "")
+                           .replace("{party-leader}", party.getLeader().getUsername())
+                          .replace("{party-members}", party.getAllPartyMembers().size() + "")
                         .replace("{party-max}", 0 + "");
             }
 

@@ -18,7 +18,7 @@ import java.util.Random;
  */
 public class Constants {
 
-    @Getter private static Random random = new Random();
+    @Getter private static final Random random = new Random();
 
     public static final Button BLACK_PANE = new Button() {
         @Override

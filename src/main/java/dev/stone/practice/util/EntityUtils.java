@@ -7,7 +7,7 @@ import java.util.Map;
 
 public final class EntityUtils {
 
-    private static Map<EntityType, String> displayNames = new EnumMap<>(EntityType.class);
+    private static final Map<EntityType, String> displayNames = new EnumMap<>(EntityType.class);
     private static int currentFakeEntityId = -1;
 
     public static int getFakeEntityId() {

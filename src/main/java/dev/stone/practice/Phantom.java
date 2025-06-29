@@ -37,6 +37,7 @@ import dev.stone.practice.match.listener.player.PlayerDeathEvent;
 import dev.stone.practice.match.listener.player.PlayerMove;
 import dev.stone.practice.match.listener.player.PlayerQuitEvent;
 import dev.stone.practice.match.listener.potion.PotionListener;
+import dev.stone.practice.party.command.PartyCommands;
 import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.division.DivisionsManager;
 import dev.stone.practice.profile.listeners.ProfileListener;
@@ -198,6 +199,7 @@ public final class Phantom extends JavaPlugin {
         commandHandler.register(new QueueCommands(), "queue");
         commandHandler.register(new ProfileSettingsCommand(), "psettings");
         commandHandler.register(new ViewInventoryCommand(), "viewinv");
+        commandHandler.register(new PartyCommands(), "party");
         commandHandler.registerCommands();
         this.logger("Registered commands!");
     }

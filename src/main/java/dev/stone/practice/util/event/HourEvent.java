@@ -9,7 +9,7 @@ public class HourEvent extends Event {
         this.hour = hour;
     }
 
-    private int hour;
+    private final int hour;
     private static final HandlerList handlerList = new HandlerList();
 
     public static HandlerList getHandlerList() {

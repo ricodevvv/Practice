@@ -40,7 +40,6 @@ public class ProfileListener implements Listener {
             e.printStackTrace();
             event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
             event.setKickMessage(ChatColor.RED + "Failed to load your profile. Try again later.");
-            return;
         }
     }
 
@@ -54,7 +53,7 @@ public class ProfileListener implements Listener {
         try {
             Phantom.getInstance().getLobbyManager().sendToSpawnAndReset(player);
         } catch (Exception e) {
-            Common.log("An error ocurred in " + getClass().getSimpleName() + "" + e.getMessage());
+            Common.log("An error ocurred in " + getClass().getSimpleName() + e.getMessage());
         }
     }
 

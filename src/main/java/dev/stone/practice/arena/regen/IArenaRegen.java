@@ -16,11 +16,11 @@ public interface IArenaRegen {
     /**
      * it will be used to copy a section of the arena to then regenerate it
      */
-    public void takeSnapshot(Arena arena);
+    void takeSnapshot(Arena arena);
 
     /**
      * This method will be called at the end of a duel; it will regenerate the arena.
      */
-    public void restore(Arena arena);
+    void restore(Arena arena);
 
 }

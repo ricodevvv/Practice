@@ -60,7 +60,7 @@ public enum SpecialEffects {
         }
     }, 1500),
     FLAME("Flame", Material.BLAZE_POWDER, "flame", (player, watchers) -> {
-        PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(EnumParticle.FLAME, false, (float)player.getLocation().getX(), (float)player.getLocation().getY(), (float)player.getLocation().getZ(), 0.5f, 0.5f, 0.5f, 0.1f, 20, new int[0]);
+        PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(EnumParticle.FLAME, false, (float)player.getLocation().getX(), (float)player.getLocation().getY(), (float)player.getLocation().getZ(), 0.5f, 0.5f, 0.5f, 0.1f, 20);
         for (Player watcher : watchers) {
             ((CraftPlayer)watcher).getHandle().playerConnection.sendPacket(packet);
         }
@@ -68,7 +68,7 @@ public enum SpecialEffects {
     PINATA("Pinata", Material.STICK, "pinata", (player, watchers) -> {
         byte[] colors = new byte[]{1, 2, 4, 5, 6, 9, 10, 11, 12, 13, 14, 15};
         for (int n : colors) {
-            PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(EnumParticle.ITEM_CRACK, false, (float)player.getLocation().getX(), (float)player.getLocation().getY(), (float)player.getLocation().getZ(), 0.0f, 0.0f, 0.0f, 0.5f, 10, new int[]{Material.INK_SACK.getId(), n});
+            PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(EnumParticle.ITEM_CRACK, false, (float)player.getLocation().getX(), (float)player.getLocation().getY(), (float)player.getLocation().getZ(), 0.0f, 0.0f, 0.0f, 0.5f, 10, Material.INK_SACK.getId(), n);
             for (Player watcher : watchers) {
                 ((CraftPlayer)watcher).getHandle().playerConnection.sendPacket(packet);
                 watcher.playSound(player.getLocation(), Sound.FIREWORK_LARGE_BLAST, 1.0f, 0.7f);
@@ -78,7 +78,7 @@ public enum SpecialEffects {
     SHATTERED("Shattered", Material.ANVIL, "shattered", (player, watchers) -> {
         byte[] grayscale = new byte[]{0, 7, 8, 15};
         for (int n : grayscale) {
-            PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(EnumParticle.ITEM_CRACK, false, (float)player.getLocation().getX(), (float)player.getLocation().add(0.0, 1.0, 0.0).getY(), (float)player.getLocation().getZ(), 0.0f, 0.0f, 0.0f, 0.5f, 20, new int[]{Material.STAINED_GLASS.getId(), n});
+            PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(EnumParticle.ITEM_CRACK, false, (float)player.getLocation().getX(), (float)player.getLocation().add(0.0, 1.0, 0.0).getY(), (float)player.getLocation().getZ(), 0.0f, 0.0f, 0.0f, 0.5f, 20, Material.STAINED_GLASS.getId(), n);
             for (Player watcher : watchers) {
                 ((CraftPlayer)watcher).getHandle().playerConnection.sendPacket(packet);
                 watcher.playSound(player.getLocation(), Sound.GLASS, 1.0f, 0.55f);
@@ -101,7 +101,7 @@ public enum SpecialEffects {
                 for (double t = 0.0; t < 50.0; t += 1.5) {
                     double x = this.radius * Math.sin(t);
                     double z = this.radius * Math.cos(t);
-                    PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(EnumParticle.BLOCK_CRACK, false, (float)(loc.getX() + x), (float)loc.getY(), (float)(loc.getZ() + z), 0.0f, 0.0f, 0.0f, 1.0f, 6, new int[]{finalBlock.getId()});
+                    PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(EnumParticle.BLOCK_CRACK, false, (float)(loc.getX() + x), (float)loc.getY(), (float)(loc.getZ() + z), 0.0f, 0.0f, 0.0f, 1.0f, 6, finalBlock.getId());
                     for (Player watcher : watchers) {
                         ((CraftPlayer)watcher).getHandle().playerConnection.sendPacket(packet);
                         watcher.playSound(loc, Sound.DIG_GRAVEL, 0.3f, 0.45f);
@@ -120,8 +120,8 @@ public enum SpecialEffects {
             double x = Math.sin(d);
             double z = Math.cos(d);
             Vector v = new Vector(x, -0.5, z).multiply(1.5);
-            PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(EnumParticle.ENCHANTMENT_TABLE, false, (float)loc.getX(), (float)loc.getY(), (float)loc.getZ(), (float)v.getX(), (float)v.getY(), (float)v.getZ(), 0.7f, 0, new int[0]);
-            PacketPlayOutWorldParticles books = new PacketPlayOutWorldParticles(EnumParticle.ITEM_CRACK, false, (float)player.getLocation().getX(), (float)player.getLocation().getY(), (float)player.getLocation().getZ(), 0.0f, 0.0f, 0.0f, 0.5f, 1, new int[]{Material.BOOK.getId(), 0});
+            PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(EnumParticle.ENCHANTMENT_TABLE, false, (float)loc.getX(), (float)loc.getY(), (float)loc.getZ(), (float)v.getX(), (float)v.getY(), (float)v.getZ(), 0.7f, 0);
+            PacketPlayOutWorldParticles books = new PacketPlayOutWorldParticles(EnumParticle.ITEM_CRACK, false, (float)player.getLocation().getX(), (float)player.getLocation().getY(), (float)player.getLocation().getZ(), 0.0f, 0.0f, 0.0f, 0.5f, 1, Material.BOOK.getId(), 0);
             for (Player watcher : watchers) {
                 for (int i = 0; i < 5; ++i) {
                     ((CraftPlayer)watcher).getHandle().playerConnection.sendPacket(packet);
@@ -148,10 +148,10 @@ public enum SpecialEffects {
             double z = 0.75 * Math.sin(this.t);
             this.loc.add(x, y, z);
             for (Player watcher : watchers) {
-                PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(EnumParticle.VILLAGER_HAPPY, false, (float)this.loc.getX(), (float)this.loc.getY(), (float)this.loc.getZ(), 0.0f, 0.0f, 0.0f, 1.0f, 0, new int[0]);
+                PacketPlayOutWorldParticles packet = new PacketPlayOutWorldParticles(EnumParticle.VILLAGER_HAPPY, false, (float)this.loc.getX(), (float)this.loc.getY(), (float)this.loc.getZ(), 0.0f, 0.0f, 0.0f, 1.0f, 0);
                 ((CraftPlayer)watcher).getHandle().playerConnection.sendPacket(packet);
                 if (this.t > Math.PI * 3) {
-                    PacketPlayOutWorldParticles pop = new PacketPlayOutWorldParticles(EnumParticle.HEART, false, (float)this.loc.getX(), (float)this.loc.getY(), (float)this.loc.getZ(), 0.0f, 0.0f, 0.0f, 1.0f, 0, new int[0]);
+                    PacketPlayOutWorldParticles pop = new PacketPlayOutWorldParticles(EnumParticle.HEART, false, (float)this.loc.getX(), (float)this.loc.getY(), (float)this.loc.getZ(), 0.0f, 0.0f, 0.0f, 1.0f, 0);
                     ((CraftPlayer)watcher).getHandle().playerConnection.sendPacket(pop);
                     Bukkit.getScheduler().runTaskLater(Phantom.getInstance(), () -> watcher.playSound(this.loc, Sound.NOTE_PLING, 1.0f, 1.6f), 1L);
                     Bukkit.getScheduler().runTaskLater(Phantom.getInstance(), () -> watcher.playSound(this.loc, Sound.NOTE_PLING, 1.0f, 1.7f), 3L);

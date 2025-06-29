@@ -49,7 +49,7 @@ public final class ArenaSchematic {
      * @param String kit name
      */
     @Getter
-    private Set<String> kits = new HashSet<>();
+    private final Set<String> kits = new HashSet<>();
 
     public ArenaSchematic() {
     } // for gson

@@ -82,7 +82,7 @@ public final class Arena {
     private int deadzone;
     @Setter public transient boolean Using;
     private int maxbuild;
-    private int portalProtecion = 5;
+    private final int portalProtecion = 5;
     private Location cageBlueMin = null;
     private Location cageBlueMax = null;
     private Location cageRedMin = null;

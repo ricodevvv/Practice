@@ -50,7 +50,7 @@ public class PageFilterButton<T> extends Button {
             lore.add(decoration + color + icon + " " + filter.getName());
         }
 
-        lore.addAll(Collections.singleton("Filter this menu"));
+        lore.add("Filter this menu");
 
         return new ItemBuilder(Material.HOPPER)
                 .name(CC.GREEN + "Filter")

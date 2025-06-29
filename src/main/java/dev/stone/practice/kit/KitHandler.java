@@ -24,7 +24,7 @@ public class KitHandler {
 
     public JsonStorage<Set<Kit>> storage;
     @Getter
-    private static Set<Kit> kits = new HashSet<>();
+    private static final Set<Kit> kits = new HashSet<>();
 
     public KitHandler() {
         Phantom.getInstance().consoleLog(CC.RED + "Starting kit handler...");

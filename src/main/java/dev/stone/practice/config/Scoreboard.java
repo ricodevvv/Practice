@@ -35,7 +35,7 @@ public class Scoreboard extends StaticConfig {
     public static int UPDATE_TICKS = 10;
 
     public static  List<String> LOBBY_SCOREBOARD = Arrays.asList(
-            "&7&m----------------------",
+            "",
             "&c &fOnline: <theme><online-players>",
             "&c &fIn Fight: <theme><match-players>",
             "&c &fIn Queue: <theme><queue-players>",
@@ -43,104 +43,110 @@ public class Scoreboard extends StaticConfig {
             "&fLevel: <theme><player_level>✮",
             "&fDivision: <player_division>",
             "<player_bar>",
-            "<theme>devstone.xyz",
-            "&7&m----------------------"
+            "<theme>devstone.xyz"
     );
 
     public static final List<String> IN_PARTY_SCOREBOARD = Arrays.asList(
-            "&7&m----------------------",
-            "&c&l┃ &fOnline: &b{online-players}",
-            "&c&l┃ &fIn Queue: &b{queue-players}",
-            "&c&l┃ &fIn Fights: &b{match-players}",
+            "",
+            "&c&l┃ &fOnline: <theme><online-players>",
+            "&c&l┃ &fIn Queue: <theme><queue-players>",
+            "&c&l┃ &fIn Fights: <theme><match-players>",
             "",
             "&c&l┃ &fTeam:",
             "&c&l┃ &f Leader: &b{party-leader}",
-            "&c&l┃ &f Member(s): &b{party-members}&7/&b{party-max}",
-            "{event-information}",
-            "&7&m----------------------"
+            "&c&l┃ &f Member(s): &7{party-members}&7/&f{party-max}",
+            "",
+            "<theme>devstone.xyz"
     );
 
     public static final List<String> IN_QUEUE_UNRANKED_SCOREBOARD = Arrays.asList(
-            "&7&m----------------------",
-            "&c&l┃ &fOnline: <theme>{online-players}",
-            "&c&l┃ &fIn Queue: <theme>{queue-players}",
-            "&c&l┃ &fIn Fights: <theme>{match-players}",
+            "",
+            "&c&l┃ &fOnline: <theme><online-players>",
+            "&c&l┃ &fIn Queue: <theme><queue-players>",
+            "&c&l┃ &fIn Fights: <theme><match-players>",
             "",
             "&c&l┃ &fQueuing: <theme>{queue-kit}",
             "&c&l┃ &fTime: <theme>{queue-time}",
-            "&c&l┃ &fPing Range: &b{ping-range}",
-            "&7&m----------------------"
+            "&c&l┃ &fPing Range: &7{ping-range}",
+            "",
+            "<theme>devstone.xyz"
     );
 
     public static final List<String> IN_QUEUE_RANKED_SCOREBOARD = Arrays.asList(
-            "&7&m----------------------",
-            "&c&l┃ &fOnline: &b{online-players}",
-            "&c&l┃ &fIn Queue: &b{queue-players}",
-            "&b&l┃ &fIn Fights: &b{match-players}",
             "",
-            "&b&l┃ &fQueuing: &b{queue-kit}",
-            "&b&l┃ &fTime: &b{queue-time}",
-            "&b&l┃ &fPing Range: &b{ping-range}",
-            "&b&l┃ &fRange: &7[&b{queue-ranked-min} &9-> &b{queue-ranked-max}&7]",
-            "&7&m----------------------"
+            "&c&l┃ &fOnline: &7<online-players>",
+            "&c&l┃ &fIn Queue: &7{queue-players}",
+            "&c&l┃ &fIn Fights: &7{match-players}",
+            "",
+            "&c&l┃ &fQueuing: &7{queue-kit}",
+            "&c&l┃ &fTime: &7{queue-time}",
+            "&c&l┃ &fPing Range: &7{ping-range}",
+            "&c&l┃ &fRange: &7[&b{queue-ranked-min} &9-> &b{queue-ranked-max}&7]",
+            "",
+            "<theme>devstone.xyz"
     );
 
 
 
     public static class MATCH_SCOREBOARD {
         public static List<String> IN_MATCH_SOLO_SCOREBOARD = Arrays.asList(
-                "&7&m----------------------",
+                "",
                 "<theme> ┃ &fFighting: <theme>{match-solo-opponent}",
                 "",
                 "<theme> ┃ &fDuration: <match-duration>",
                 "<theme> ┃ &fYour Ping: <theme>{match-solo-self-ping}ms",
                 "<theme> ┃ &fTheir Ping: <theme>{match-solo-opponent-ping}ms",
-                "&7&m----------------------"
+                "",
+                "<theme>devstone.xyz"
         );
         public static final List<String> BED_SCOREBOARD = Arrays.asList(
-                "&7&m----------------------",
-                "&b&l┃ &fFighting: &b{match-solo-opponent}",
                 "",
-                "&b&l┃ &f{match-team1-logo}&7: &f{match-team1-bed-status}",
-                "&b&l┃ &f{match-team2-logo}&7: &f{match-team2-bed-status}",
+                "&c&l┃ &fFighting: &7{match-solo-opponent}",
                 "",
-                "&b&l┃ &fBuild Height: &b{match-build-limit}{match-build-limit-difference}",
+                "&c&l┃ &f{match-team1-logo}&7: &7{match-team1-bed-status}",
+                "&c&l┃ &f{match-team2-logo}&7: &7{match-team2-bed-status}",
                 "",
-                "&b&l┃ &fYour Ping: &b{match-solo-self-ping}ms",
-                "&b&l┃ &fTheir Ping: &b{match-solo-opponent-ping}ms",
-                "&7&m----------------------"
+                "&c&l┃ &fBuild Height: &7{match-build-limit}{match-build-limit-difference}",
+                "",
+                "&c&l┃ &fYour Ping: &7{match-solo-self-ping}ms",
+                "&c&l┃ &fTheir Ping: &7{match-solo-opponent-ping}ms",
+                "",
+                "<theme>devstone.xyz"
         );
 
         public static final List<String> POINT_SCOREBOARD = Arrays.asList(
-                "&7&m----------------------",
-                "&b&l┃ &fFighting: &b{match-solo-opponent}",
                 "",
-                "&b&l┃ &f{match-team1-logo}&7: &f{match-team1-points}",
-                "&b&l┃ &f{match-team2-logo}&7: &f{match-team2-points}",
+                "&c&l┃ &fFighting: &7{match-solo-opponent}",
                 "",
-                "&b&l┃ &fYour Ping: &b{match-solo-self-ping}ms",
-                "&b&l┃ &fTheir Ping: &b{match-solo-opponent-ping}ms",
-                "&7&m----------------------"
+                "&c&l┃ &f{match-team1-logo}&7: &7{match-team1-points}",
+                "&c&l┃ &f{match-team2-logo}&7: &7{match-team2-points}",
+                "",
+                "&c&l┃ &fYour Ping: &7{match-solo-self-ping}ms",
+                "&c&l┃ &fTheir Ping: &7{match-solo-opponent-ping}ms",
+                "",
+                "<theme>devstone.xyz"
         );
         public static final List<String> BOXING_SCOREBOARD = Arrays.asList(
-                "&7&m----------------------",
-                "&b&l┃ &fFighting: &b{match-solo-opponent}",
                 "",
-                "&b&l┃ &bHits: {match-solo-boxing-difference-color}({match-solo-boxing-difference-symbol}{match-solo-boxing-difference})",
-                "&b&l┃ &a You: &f{match-solo-boxing-self-hit}",
-                "&b&l┃ &c Them: &f{match-solo-boxing-opponent-hit}",
-                "&b&l┃ &f {match-solo-boxing-difference-text}",
+                "&b&l┃ &fFighting: &7{match-solo-opponent}",
                 "",
-                "&b&l┃ &fYour Ping: &b{match-solo-self-ping}ms",
-                "&b&l┃ &fTheir Ping: &b{match-solo-opponent-ping}ms",
-                "&7&m----------------------"
+                "&c&l┃ &bHits: {match-solo-boxing-difference-color}({match-solo-boxing-difference-symbol}{match-solo-boxing-difference})",
+                "&c&l┃ &a You: &7{match-solo-boxing-self-hit}",
+                "&c&l┃ &c Them: &7{match-solo-boxing-opponent-hit}",
+                "&c&l┃ &f {match-solo-boxing-difference-text}",
+                "",
+                "&c&l┃ &fYour Ping: &7{match-solo-self-ping}ms",
+                "&c&l┃ &fTheir Ping: &7{match-solo-opponent-ping}ms",
+                "",
+                "<theme>devstone.xyz"
         );
 
         public static final List<String> ENDING_SCOREBOARD = Arrays.asList(
-                "&7&m----------------------",
+                "",
                 "&b&l┃ &aMatch Over!",
                 "&b&l┃ &fWinner: &b{match-solo-winner}",
-                "&7&m----------------------"
+                "",
+                "<theme>devstone.xyz"
         );
 
     }

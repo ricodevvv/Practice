@@ -596,7 +596,7 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
 
     @Override
     public String toString() {
-        return new String("Cuboid: " + this.worldName + "," + this.x1 + "," + this.y1 + "," + this.z1 + "=>" + this.x2 + "," + this.y2 + "," + this.z2);
+        return "Cuboid: " + this.worldName + "," + this.x1 + "," + this.y1 + "," + this.z1 + "=>" + this.x2 + "," + this.y2 + "," + this.z2;
     }
 
     public List<Block> getWalls() {
@@ -700,18 +700,20 @@ public class Cuboid implements Iterable<Block>, Cloneable, ConfigurationSerializ
     }
 
     public class CuboidIterator implements Iterator<Block> {
-        private World w;
-        private int baseX, baseY, baseZ;
+        private final World w;
+        private final int baseX;
+        private final int baseY;
+        private final int baseZ;
         private int x, y, z;
-        private int sizeX, sizeY, sizeZ;
+        private final int sizeX;
+        private final int sizeY;
+        private final int sizeZ;
 
         public CuboidIterator(World w, int x1, int y1, int z1, int x2, int y2, int z2) {
             this.w = w;
             this.baseX = Math.min(x1, x2);
             this.baseY = Math.min(y1, y2);
-            ;
             this.baseZ = Math.min(z1, z2);
-            ;
             this.sizeX = Math.abs(x2 - x1) + 1;
             this.sizeY = Math.abs(y2 - y1) + 1;
             this.sizeZ = Math.abs(z2 - z1) + 1;

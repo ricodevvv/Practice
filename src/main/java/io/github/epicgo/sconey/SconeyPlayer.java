@@ -173,19 +173,19 @@ public class SconeyPlayer {
 
             if (prefix.charAt(15) == ChatColor.COLOR_CHAR) {
                 prefix = prefix.substring(0, 15);
-                team = colorCharAt(value) + lastColors(prefix) + text.substring(15, text.length());
+                team = colorCharAt(value) + lastColors(prefix) + text.substring(15);
             } else if (prefix.charAt(14) == ChatColor.COLOR_CHAR) {
                 prefix = prefix.substring(0, 14);
-                team = colorCharAt(value) + lastColors(prefix) + text.substring(14, text.length());
+                team = colorCharAt(value) + lastColors(prefix) + text.substring(14);
             } else {
-                team = colorCharAt(value) + lastColors(prefix) + text.substring(16, text.length());
+                team = colorCharAt(value) + lastColors(prefix) + text.substring(16);
             }
 
             if (team.length() > 16) {
                 team = team.substring(0, 16);
 
                 int start = prefix.length() + (team.length() - colorCharAt(value).length() - lastColors(prefix).length());
-                suffix = text.substring(start, text.length());
+                suffix = text.substring(start);
 
                 if (suffix.length() > 16) {
                     suffix = suffix.substring(0, 16);

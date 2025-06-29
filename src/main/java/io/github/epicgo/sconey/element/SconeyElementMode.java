@@ -20,7 +20,7 @@ public enum SconeyElementMode {
      * @param descending  whether the positions are going down or up.
      * @param startNumber from where to loop from.
      */
-    private SconeyElementMode(final boolean descending, final int startNumber) {
+    SconeyElementMode(final boolean descending, final int startNumber) {
         this.descending = descending;
         this.startNumber = startNumber;
     }

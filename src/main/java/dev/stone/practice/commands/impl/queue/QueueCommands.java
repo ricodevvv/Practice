@@ -34,7 +34,6 @@ public class QueueCommands implements PotPvPCommand {
             return;
         }
         Queue.leaveQueue(player);
-        return;
     }
 
     @Command(name = "", desc = "Leave from kit queue")

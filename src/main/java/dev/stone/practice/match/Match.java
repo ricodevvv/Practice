@@ -155,7 +155,7 @@ public abstract class Match {
             return;
         }
 
-        Common.debug("Ending " + getClass().getSimpleName() + " fighting (" + teams.stream().map(team -> team.getLeader().getUsername()).collect(Collectors.joining(" vs ")) + ") (Kit: " + kit.getName() + ") (Map: " + arenaDetail.getSchematic().toString() + ") (UUID: " + uuid + ")");
+        Common.debug("Ending " + getClass().getSimpleName() + " fighting (" + teams.stream().map(team -> team.getLeader().getUsername()).collect(Collectors.joining(" vs ")) + ") (Kit: " + kit.getName() + ") (Map: " + arenaDetail.getSchematic() + ") (UUID: " + uuid + ")");
         state = MatchState.ENDING;
 
         MatchEndEvent event = new MatchEndEvent(this, forced);

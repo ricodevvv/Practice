@@ -289,8 +289,7 @@ public final class ArenaHandler {
                     if (schematic == null) return false;
                     boolean kitCompatible = schematic.getKits().contains(kit.getName());
                     if (!kitCompatible) return false;
-                    if (arena.isUsing()) return false;
-                    return true;
+                    return !arena.isUsing();
                 })
                 .collect(Collectors.toList());
         if (availableArenas.isEmpty()) {

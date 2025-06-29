@@ -8,6 +8,7 @@ import dev.stone.practice.profile.Profile;
 import dev.stone.practice.profile.ProfileState;
 import dev.stone.practice.queue.Queue;
 import dev.stone.practice.queue.QueueProfile;
+import dev.stone.practice.queue.QueueType;
 import io.github.epicgo.sconey.element.SconeyElement;
 import io.github.epicgo.sconey.element.SconeyElementAdapter;
 import io.github.epicgo.sconey.element.SconeyElementMode;
@@ -55,8 +56,24 @@ public class ScoreboardAdapter implements SconeyElementAdapter {
                     .map(key -> Phantom.getInstance().placeholders.translate(player, key))
                     .collect(Collectors.toList());
             element.addAll(translated);
-        }  else if (profile.getState() == ProfileState.FIGHTING && match != null) {
+        } else if (profile.getState() == ProfileState.LOBBY) {
+            List<String> translated = Scoreboard.IN_PARTY_SCOREBOARD.stream()
+                    .map(key -> Phantom.getInstance().placeholders.translate(player, key))
+                    .collect(Collectors.toList());
+            element.addAll(translated);
+        }
+          else if (profile.getState() == ProfileState.FIGHTING && match != null) {
             element.addAll(match.getMatchScoreboard(player));
+        } else if (profile.getState() == ProfileState.QUEUEING && qProfile != null && qProfile.getQueueType() == QueueType.UNRANKED)  {
+            List<String> translated = Scoreboard.IN_QUEUE_UNRANKED_SCOREBOARD.stream()
+                    .map(key -> Phantom.getInstance().placeholders.translate(player, key))
+                    .collect(Collectors.toList());
+            element.addAll(translated);
+        } else if (profile.getState() == ProfileState.QUEUEING && qProfile != null && qProfile.getQueueType() == QueueType.RANKED)  {
+            List<String> translated = Scoreboard.IN_QUEUE_RANKED_SCOREBOARD.stream()
+                    .map(key -> Phantom.getInstance().placeholders.translate(player, key))
+                    .collect(Collectors.toList());
+            element.addAll(translated);
         }
         return element;
     }
