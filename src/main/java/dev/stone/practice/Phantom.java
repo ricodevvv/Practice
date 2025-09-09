@@ -84,6 +84,7 @@ public final class Phantom extends JavaPlugin {
             .registerTypeHierarchyAdapter(Location.class, new LocationAdapter())
             .registerTypeHierarchyAdapter(Vector.class, new VectorAdapter())
             .registerTypeAdapter(BlockVector.class, new BlockVectorAdapter())
+            .registerTypeAdapter(dev.stone.practice.util.Cuboid.class, new dev.stone.practice.util.serialization.CuboidAdapter())
             .serializeNulls()
             .create();
 
@@ -93,6 +94,7 @@ public final class Phantom extends JavaPlugin {
             .registerTypeHierarchyAdapter(Location.class, new LocationAdapter())
             .registerTypeHierarchyAdapter(Vector.class, new VectorAdapter())
             .registerTypeAdapter(BlockVector.class, new BlockVectorAdapter())
+            .registerTypeAdapter(dev.stone.practice.util.Cuboid.class, new dev.stone.practice.util.serialization.CuboidAdapter())
             .serializeNulls()
             .create();
 

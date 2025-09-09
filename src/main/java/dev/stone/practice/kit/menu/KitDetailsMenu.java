@@ -108,6 +108,6 @@ public class KitDetailsMenu extends PaginatedMenu {
 
     @Override
     public int getSize() {
-        return Lenguaje.KIT_MENU.KIT_DETAILS_MENU_SIZE;
+        return 54;
     }
 }

@@ -1,6 +1,5 @@
 package dev.stone.practice.kit.menu;
 
-import dev.stone.practice.config.Config;
 import dev.stone.practice.config.Lenguaje;
 import dev.stone.practice.kit.KitHandler;
 import dev.stone.practice.util.ItemBuilder;
@@ -36,6 +35,7 @@ public class KitsManagementMenu extends PaginatedMenu {
             public ItemStack getButtonItem(Player player) {
                 return new ItemBuilder(kit.getDisplayIcon().clone())
                         .name(Lenguaje.KIT_MENU.KIT_MANAGE_BUTTON.replace("<kit>", kit.getDisplayName()))
+                        .lore(Lenguaje.KIT_MENU.KIT_MANAGE_BUTTON_LORE)
                         .build();
             }
 

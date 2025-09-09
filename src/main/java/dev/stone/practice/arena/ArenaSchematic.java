@@ -6,8 +6,7 @@ import com.google.common.base.Preconditions;
 import com.sk89q.worldedit.Vector;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +16,7 @@ import lombok.Setter;
  * for a comparision of {@link Arena}s and {@link ArenaSchematic}s.
  */
 @Getter
+@Setter
 public final class ArenaSchematic {
 
     /**
@@ -29,26 +29,41 @@ public final class ArenaSchematic {
      * Display name of this Arena, will be used when communicating a GameMode
      * to players. Ex: "Map 15", "Ice KOTH", ...
      */
-    @Getter
-    @Setter
     private String displayName;
 
     /**
      * If matches can be scheduled on an instance of this arena.
      * Only impacts match scheduling, admin commands are (ignoring visual differences) nonchanged
      */
-    @Setter
     private boolean enabled = false;
 
 
-    @Getter
-    @Setter
     private int gridIndex;
+
+    private ArenaType type = ArenaType.STANDALONE;
+    private String displayIcon; // base64 gzipped icon
+    private boolean pearlsAllowed = true;
+    private int deathHeight = 0;
+    private int buildHeight = 0;
+    private int portalRadius = 3;
+    private int protectionRadius = 2;
+    private int ffaSpawnRadius = 10;
+
+    // Spawn locations and bounds for model
+    private org.bukkit.Location spawn1;
+    private org.bukkit.Location spawn2;
+    private org.bukkit.Location spectatorSpawn;
+    private dev.stone.practice.util.Cuboid bounds;
+
+    // Optional special locations/bounds per team
+    private List<org.bukkit.Location> redSpecial = new ArrayList<>();
+    private List<org.bukkit.Location> blueSpecial = new ArrayList<>();
+    private dev.stone.practice.util.Cuboid redSpecialBounds;
+    private dev.stone.practice.util.Cuboid blueSpecialBounds;
 
     /**
      * @param String kit name
      */
-    @Getter
     private final Set<String> kits = new HashSet<>();
 
     public ArenaSchematic() {
@@ -99,7 +114,4 @@ public final class ArenaSchematic {
         return name.hashCode();
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
 }

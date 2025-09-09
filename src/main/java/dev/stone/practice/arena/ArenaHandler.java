@@ -54,30 +54,18 @@ public final class ArenaHandler {
 
     public ArenaHandler() {
         Bukkit.getPluginManager().registerEvents(new ArenaItemResetListener(), Phantom.getInstance());
+        loadFromDisk();
+    }
 
+    private void loadFromDisk() {
         File folder = Phantom.getInstance().getDataFolder();
-
         File arenaInstancesFile = new File(folder, ARENA_INSTANCES_FILE_NAME);
         File schematicsFile = new File(folder, SCHEMATICS_FILE_NAME);
 
+        schematics.clear();
+        arenaInstances.clear();
+
         try {
-            // parsed as a List<Arena> and then inserted into Map<String, Map<Integer. Arena>>
-            if (arenaInstancesFile.exists()) {
-                try (Reader arenaInstancesReader = Files.newReader(arenaInstancesFile, Charsets.UTF_8)) {
-                    Type arenaListType = new TypeToken<List<Arena>>() {
-                    }.getType();
-                    List<Arena> arenaList = Phantom.getGson().fromJson(arenaInstancesReader, arenaListType);
-
-                    for (Arena arena : arenaList) {
-                        // create inner Map for schematic if not present
-                        arenaInstances.computeIfAbsent(arena.getSchematic(), i -> new HashMap<>());
-
-                        // register this copy with the inner Map
-                        arenaInstances.get(arena.getSchematic()).put(arena.getCopy(), arena);
-                    }
-                }
-            }
-
             // parsed as a List<ArenaSchematic> and then inserted into Map<String, ArenaSchematic>
             if (schematicsFile.exists()) {
                 try (Reader schematicsFileReader = Files.newReader(schematicsFile, Charsets.UTF_8)) {
@@ -90,8 +78,21 @@ public final class ArenaHandler {
                     }
                 }
             }
+
+            // parsed as a List<Arena> and then inserted into Map<String, Map<Integer, Arena>>
+            if (arenaInstancesFile.exists()) {
+                try (Reader arenaInstancesReader = Files.newReader(arenaInstancesFile, Charsets.UTF_8)) {
+                    Type arenaListType = new TypeToken<List<Arena>>() {
+                    }.getType();
+                    List<Arena> arenaList = Phantom.getGson().fromJson(arenaInstancesReader, arenaListType);
+
+                    for (Arena arena : arenaList) {
+                        arenaInstances.computeIfAbsent(arena.getSchematic(), i -> new HashMap<>());
+                        arenaInstances.get(arena.getSchematic()).put(arena.getCopy(), arena);
+                    }
+                }
+            }
         } catch (IOException ex) {
-            // just rethrow, can't recover from arenas failing to load
             throw new RuntimeException(ex);
         }
     }
@@ -118,6 +119,10 @@ public final class ArenaHandler {
                 new File(Phantom.getInstance().getDataFolder(), ARENA_INSTANCES_FILE_NAME),
                 Charsets.UTF_8
         );
+    }
+
+    public void reload() {
+        loadFromDisk();
     }
 
     public World getArenaWorld() {

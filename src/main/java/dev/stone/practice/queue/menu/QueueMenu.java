@@ -46,7 +46,7 @@ public class QueueMenu extends Menu {
                     @Override
                     public ItemStack getButtonItem(Player player) {
                         return new ItemBuilder(kit.getDisplayIcon().clone())
-                                .name(kit.getDisplayName())
+                                .name("&b" + kit.getDisplayName())
                                 .lore(kit.getDescription())
                                 .lore(Lenguaje.QUEUE_MESSAGES.MENU_BUTTON_LORE.stream()
                                         .map(s -> s
@@ -64,7 +64,8 @@ public class QueueMenu extends Menu {
                                                 .replace("<kit>", kit.getDisplayName())
                                         )
                                         .collect(Collectors.toList()))
-
+                                .lore("")
+                                .lore("&aClick to queue")
                                 .build();
                     }
 

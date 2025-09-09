@@ -1,0 +1,13 @@
+TITLE: "Development"
+LOBBY:
+  - "&7                          "
+  - "&fOnline: <theme>{online-players}"
+  - "&fPlaying: <theme>{match-players}"
+  - "&fQueueing: <theme>{queue-players}"
+  - ""
+  - "&fCoins: <theme><coins>"
+  - "&fLevel: <theme><player_level>✮"
+  - "&fDivision: <player_division>"
+  - "<player_bar>"
+  - ""
+  - "&7&onodebuff.club"

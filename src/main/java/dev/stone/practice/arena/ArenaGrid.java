@@ -2,6 +2,8 @@ package dev.stone.practice.arena;
 
 import java.io.IOException;
 
+import com.boydti.fawe.object.schematic.Schematic;
+import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -11,6 +13,8 @@ import com.sk89q.worldedit.Vector;
 import lombok.Getter;
 import dev.stone.practice.Phantom;
 import dev.stone.practice.util.Cuboid;
+
+import javax.xml.validation.Schema;
 
 
 public final class ArenaGrid {
@@ -118,17 +122,24 @@ public final class ArenaGrid {
     }
 
     private Arena createArena(ArenaSchematic schematic, int xStart, int zStart, int copy) {
+        if (schematic == null) {
+            throw new IllegalArgumentException("schematic is null");
+        }
+
         Vector pasteAt = new Vector(xStart, STARTING_POINT.getY(), zStart);
-        CuboidClipboard clipboard;
+        Schematic clipboard;
 
         try {
             clipboard = WorldEditUtils.paste(schematic, pasteAt);
+            if (clipboard == null || clipboard.getClipboard() == null) {
+                throw new IllegalStateException("clipboard or clipboard content is null");
+            }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
 
         Location lowerCorner = WorldEditUtils.vectorToLocation(pasteAt);
-        Location upperCorner = WorldEditUtils.vectorToLocation(pasteAt.add(clipboard.getSize()));
+        Location upperCorner = WorldEditUtils.vectorToLocation(pasteAt.add(clipboard.getClipboard().getDimensions()));
 
         return new Arena(
                 schematic.getName(),
@@ -136,6 +147,7 @@ public final class ArenaGrid {
                 new Cuboid(lowerCorner, upperCorner)
         );
     }
+
 
     public void free() {
         busy = false;

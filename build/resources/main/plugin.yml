@@ -1,0 +1,6 @@
+name: Phantom
+author: ricodevvv
+version: 1.8.8
+main: dev.stone.practice.Phantom
+depend:
+  - ProtocolLib

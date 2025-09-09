@@ -20,21 +20,25 @@ public class PageButton extends Button {
         if (this.mod > 0) {
             if (hasNext(player)) {
                 return new ItemBuilder(Material.ARROW)
-
+                        .name(dev.stone.practice.config.Lenguaje.MENU_UI.NEXT_PAGE_NAME)
+                        .lore(dev.stone.practice.config.Lenguaje.MENU_UI.NEXT_PAGE_LORE)
                         .build();
             } else {
                 return new ItemBuilder(Material.ARROW)
-
+                        .name(dev.stone.practice.config.Lenguaje.MENU_UI.DISABLED_NAME)
+                        .lore(dev.stone.practice.config.Lenguaje.MENU_UI.DISABLED_LORE)
                         .build();
             }
         } else {
             if (hasPrevious(player)) {
                 return new ItemBuilder(Material.ARROW)
-
+                        .name(dev.stone.practice.config.Lenguaje.MENU_UI.PREVIOUS_PAGE_NAME)
+                        .lore(dev.stone.practice.config.Lenguaje.MENU_UI.PREVIOUS_PAGE_LORE)
                         .build();
             } else {
                 return new ItemBuilder(Material.ARROW)
-
+                        .name(dev.stone.practice.config.Lenguaje.MENU_UI.DISABLED_NAME)
+                        .lore(dev.stone.practice.config.Lenguaje.MENU_UI.DISABLED_LORE)
                         .build();
             }
         }

@@ -44,7 +44,29 @@ public class ArenaCommands implements PotPvPCommand {
     @Command(name = "", desc = "Help message for arenas")
     @Require("potpvp.arena.admin")
     public void help(@Sender Player sender) {
-        sender.sendMessage("Change this");
+        sender.sendMessage(CC.translate(dev.stone.practice.config.Lenguaje.HELP.SEPARATOR));
+        sender.sendMessage(CC.translate(dev.stone.practice.config.Lenguaje.HELP.HEADER.replace("<name>", "Arena")));
+        dev.stone.practice.config.Lenguaje.HELP.ARENA.forEach(line -> sender.sendMessage(CC.translate(line)));
+        sender.sendMessage(CC.translate(dev.stone.practice.config.Lenguaje.HELP.SEPARATOR));
+    }
+
+    @Command(name = "reload", desc = "Reload arenas from disk")
+    @Require("potpvp.arena.admin")
+    public void reload(@Sender Player sender) {
+        Phantom.getInstance().getArenaHandler().reload();
+        sender.sendMessage(CC.GREEN + " Arenas reloaded from disk.");
+    }
+
+    @Command(name = "save", desc = "Save arenas and schematics to disk")
+    @Require("potpvp.arena.admin")
+    public void save(@Sender Player sender) {
+        try {
+            Phantom.getInstance().getArenaHandler().saveSchematics();
+            Phantom.getInstance().getArenaHandler().saveArenas();
+            sender.sendMessage(CC.GREEN + " Arenas and schematics saved.");
+        } catch (Exception ex) {
+            sender.sendMessage(CC.RED + " Failed to save: " + ex.getMessage());
+        }
     }
 
     @Command(name = "free", desc = "Free all arenas")
@@ -166,7 +188,7 @@ public class ArenaCommands implements PotPvPCommand {
 
         for (Arena arena : arenaHandler.getArenas(schematic)) {
             String locationStr = LocationUtils.locToStr(arena.getSpectatorSpawn());
-            String occupiedStr = arena.isInUse() ? ChatColor.RED + "In Use" : ChatColor.GREEN + "Open";
+            String occupiedStr = arena.isUsing() ? ChatColor.RED + "In Use" : ChatColor.GREEN + "Open";
 
             sender.sendMessage(arena.getCopy() + ": " + ChatColor.GREEN + locationStr + ChatColor.GRAY + " - " + occupiedStr);
         }

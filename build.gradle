@@ -1,0 +1,81 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'io.freefair.lombok' version '8.6'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.11' apply false
+    id 'com.gorylenko.gradle-git-properties' version '2.4.1'
+}
+
+group = 'dev.stone.practice'
+version = '1.2.1-BETA'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_17
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url = uri('https://maven.refinedev.xyz/public-repo') }
+    maven { url = uri('https://repo.dmulloy2.net/nexus/repository/public/') }
+    maven { url = uri('https://repo.j4c0b3y.net/public/') }
+    maven { url = uri('https://repo.codemc.io/repository/maven-releases/') }
+    maven { url = uri('https://repo.codemc.io/repository/maven-snapshots/') }
+    maven { url = uri('https://repo.minebench.de/') }
+}
+
+
+dependencies {
+    implementation fileTree(dir: 'lib', include: ['*.jar'])
+
+
+    implementation 'net.j4c0b3y:ConfigAPI-bukkit:1.2.3'
+    implementation 'net.j4c0b3y:MenuAPI-core:1.5.1'
+    implementation 'xyz.refinedev.api:CommandAPI:1.1-SNAPSHOT'
+
+    compileOnly 'com.comphenix.protocol:ProtocolLib:4.8.0'
+    implementation 'org.mongodb:mongo-java-driver:3.12.8'
+
+
+    compileOnly 'org.projectlombok:lombok:1.18.20'
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.11'
+    testImplementation 'org.jetbrains.kotlin:kotlin-test:1.3.11'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 8
+}
+
+
+gitProperties {
+    keys = ['git.commit.id.abbrev', 'git.commit.id']
+    dateFormatTimeZone = 'UTC'
+}
+
+processResources {
+    filter {
+        it.replace('@version@', project.version)
+    }
+}
+
+shadowJar {
+    archiveBaseName.set('Phantom')
+    minimize()
+}
+
+tasks.build {
+    dependsOn tasks.shadowJar
+}
+

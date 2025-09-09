@@ -1,32 +1,29 @@
 package dev.stone.practice.arena;
 
-import com.sk89q.worldedit.CuboidClipboard;
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.EditSessionFactory;
-import com.sk89q.worldedit.MaxChangedBlocksException;
-import com.sk89q.worldedit.Vector;
-import com.sk89q.worldedit.WorldEdit;
+import com.boydti.fawe.object.schematic.Schematic;
+import com.sk89q.worldedit.*;
 import com.sk89q.worldedit.blocks.BaseBlock;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
+import com.sk89q.worldedit.extent.clipboard.io.ClipboardFormat;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.schematic.SchematicFormat;
-
 import dev.stone.practice.Phantom;
 import dev.stone.practice.util.Cuboid;
-
+import lombok.experimental.UtilityClass;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
 import java.io.File;
-
-import lombok.experimental.UtilityClass;
+import java.io.IOException;
+import java.util.HashMap;
 
 @UtilityClass
 public final class WorldEditUtils {
 
     private static EditSession editSession;
     private static com.sk89q.worldedit.world.World worldEditWorld;
+    private final HashMap<String, Schematic> cache = new HashMap<>();
 
     public static void primeWorldEditApi() {
         if (editSession != null) {
@@ -40,30 +37,25 @@ public final class WorldEditUtils {
         editSession = esFactory.getEditSession(worldEditWorld, Integer.MAX_VALUE);
     }
 
-    public static CuboidClipboard paste(ArenaSchematic schematic, Vector pasteAt) throws Exception {
-        primeWorldEditApi();
 
-        CuboidClipboard clipboard = SchematicFormat.MCEDIT.load(schematic.getSchematicFile());
-
-        // systems like the ArenaGrid assume that pastes will 'begin' directly at the Vector
-        // provided. to ensure we can do this, we manually clear any offset (distance from
-        // corner of schematic to player) to ensure our pastes aren't dependant on the
-        // location of the player when copied
-        clipboard.setOffset(new Vector(0, 0, 0));
-        clipboard.paste(editSession, pasteAt, true);
-
-        return clipboard;
-    }
-
-    public static void save(ArenaSchematic schematic, Vector saveFrom) throws Exception {
-        primeWorldEditApi();
-
-        Vector schematicSize = readSchematicSize(schematic);
-
-        CuboidClipboard newSchematic = new CuboidClipboard(schematicSize, saveFrom);
-        newSchematic.copy(editSession);
-
-        SchematicFormat.MCEDIT.save(newSchematic, schematic.getSchematicFile());
+    public Schematic paste(ArenaSchematic s, Vector pastedAt){
+        ClipboardFormat cf;
+        if (!cache.containsKey(s.getName())){
+             cf = ClipboardFormat.findByFile(s.getSchematicFile());
+            try {
+                if (cf != null){
+                    cache.put(s.getName(), cf.load(s.getSchematicFile()));
+                }
+            } catch (IOException ignored) {
+            }
+        }
+        if (cache.containsKey(s.getName())){
+            Schematic sh = cache.get(s.getName());
+            EditSession editSession = sh.paste(worldEditWorld, pastedAt, false, true, null);
+            editSession.flushQueue();
+            return sh;
+        }
+        return null;
     }
 
     public static void clear(Cuboid bounds) {
@@ -79,13 +71,7 @@ public final class WorldEditUtils {
         BaseBlock air = new BaseBlock(Material.AIR.getId());
         Region region = new CuboidRegion(worldEditWorld, lower, upper);
 
-        try {
-            editSession.setBlocks(region, air);
-        } catch (MaxChangedBlocksException ex) {
-            // our block change limit is Integer.MAX_VALUE, so will never
-            // have to worry about this happening
-            throw new RuntimeException(ex);
-        }
+        editSession.setBlocks(region, air);
     }
 
     public static Vector readSchematicSize(ArenaSchematic schematic) throws Exception {

@@ -22,6 +22,15 @@ import xyz.refinedev.command.annotation.Sender;
  */
 public class KitCommands implements PotPvPCommand {
 
+    @Command(name = "", desc = "Help message for kits")
+    @Require("phantom.admin.kit")
+    public void help(@Sender Player player) {
+        player.sendMessage(CC.translate(dev.stone.practice.config.Lenguaje.HELP.SEPARATOR));
+        player.sendMessage(CC.translate(dev.stone.practice.config.Lenguaje.HELP.HEADER.replace("<name>", "Kit")));
+        dev.stone.practice.config.Lenguaje.HELP.KIT.forEach(line -> player.sendMessage(CC.translate(line)));
+        player.sendMessage(CC.translate(dev.stone.practice.config.Lenguaje.HELP.SEPARATOR));
+    }
+
     @Command(name = "create", desc = "Create kit", usage = "/kit create <name>")
     @Require("phantom.admin.kit")
     public void onKitCreate(@Sender Player player, String kitname) {
@@ -32,7 +41,8 @@ public class KitCommands implements PotPvPCommand {
             return;
         }
 
-        Kit created = new Kit(kitname);
+        new Kit(kitname);
+        player.sendMessage(CC.GREEN + " Kit created: " + kitname);
         handler.saveKits();
     }
 
